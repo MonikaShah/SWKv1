@@ -8,8 +8,103 @@ body, html {height: 100%}
   
 }
 
-img {
-	width:100%;
-  height:100%;
-  
+@media (max-width: 640px) {
+	img.idfc{
+		width: 20% !important;
+		height: 100%;
+	   } 
+	img.sms,img.mcgm{
+		width: 15% !important;
+		height: 100%;
+	   }
+	#brand_container{
+		/* height: 10%; */
+		margin-right: 10%;
+	}
+	a.nav-link{
+        margin-left: 20%;
+		font-size: small;
+    } 
+}
+@media (min-width: 640px) and (max-width:700px) {
+	img.idfc{
+		width: 20% !important;
+		height: 100%;
+	   } 
+	img.sms,img.mcgm{
+		width: 15% !important;
+		height: 100%;
+	   }
+	   #brand_container{
+		/* height: 10%; */
+		margin-right: 10%;
+	}
+	a.nav-link{
+        margin-left: 20%;
+		font-size: medium;
+    }
+}
+@media (min-width: 700px) and (max-width:1200px) {
+	img.idfc{
+		width: 15% !important;
+		height: 100%;
+	   } 
+	img.sms,img.mcgm{
+		width: 10% !important;
+		height: 100%;
+	   }
+	   #brand_container{
+		/* height: 10%; */
+		margin-right: 10%;
+	}
+	a.nav-link{
+        margin-left: 20%;
+		font-size: large;
+    }
+	
+}
+@media (min-width: 1200px) and (max-width:1750px) {
+	img.idfc{
+		width: 10% !important;
+		height: 100%;
+	   } 
+	img.sms,img.mcgm{
+		width: 7% !important;
+		height: 100%;
+	   }
+	   
+	a.nav-link{
+        margin-left: 20%;
+		font-size: larger;
+    }
+	
+}
+@media (min-width: 1750px) and (max-width: 2000px) {
+	img.idfc{
+		/* margin:auto; */
+		width: 8% !important;
+		height: 100%;
+	   } 
+	img.sms,img.mcgm{
+		/* margin:auto; */
+		width: 5% !important;
+		height: 100%;
+	   }
+	
+	#brand_container{
+		height: 10%;
+	}
+	footer{
+		height: 8%;
+	}
+	.logo{
+		width: 40%;
+		/* margin: 5%; */
+		float: right;
+		/* height: 100%; */
+	}
+	a.nav-link{
+        margin-left: 20%;
+		font-size: larger;
+    }
 }
