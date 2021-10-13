@@ -7,7 +7,7 @@
 # *.pot
 *.pyc
 __pycache__/
-swk/static/images/GPS_Photos/
+swk/static/images/*
 swk/__pycache__/*
 local_settings.py
 db.sqlite3
