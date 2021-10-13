@@ -1,0 +1,56 @@
+{% extends 'new.html' %} {% load static%}
+{% load i18n %}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href=""> {% block extra_css %}
+<style>
+    .myform {
+        margin: 0px 0px;
+    }
+    
+    .card-panel {
+        margin-bottom: 0px;
+    }
+</style>
+{% endblock %} {% block content %} {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<div class='container' style="text-align: center; margin-bottom: 190px;">
+    <form action="{% url 'login' %}" method="POST" class="form-group">
+        {% csrf_token %}
+        <div class="myform"><br><br><br><br>
+            <h3>{% trans "SWK Portal Login" %}</h3>
+
+            <div class="card-panel">
+                <input type="text" class="form-control" name="username" aria-describedby="emailHelp" placeholder={% trans "EnterUsername" %} id="name">
+            </div>
+            <br>
+            <div class="card-panel">
+                <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder={% trans "Password" %}>
+            </div><br><br>
+
+            <button type="submit" class="btn btn-success btn-lg">{% trans "Login" %} </button>
+        </div>
+
+    </form>
+    <br>
+</div>
+
+
+{% endblock %}

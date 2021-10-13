@@ -1,0 +1,14 @@
+.infobox{
+    width: 400px;
+    text-align: center;
+
+}
+
+.infobox--selected{
+    border-top: 10px solid lightgreen;
+  }
+  
+.infobox_value{
+    margin-top: 20px;
+    color: lightgreen;
+}

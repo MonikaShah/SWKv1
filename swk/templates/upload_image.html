@@ -1,0 +1,39 @@
+{% extends 'new.html' %} {% load crispy_forms_tags %} {% block content %} 
+{% load i18n %}
+{% load l10n %}
+    
+    <div class="upload-section" style="padding-top: 100px;">
+    <form id ='form' class="container section" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+         <label for="img" id="selectimg" style="font-size:14px; padding-right:20px;">Browse image from your device:</label>
+        <input type="file"  accept="image/*" name="picture" id="file"  onchange="loadFile(event)" >
+        <p><img id="output" width="300"/></p>
+
+                  <script>
+                  var loadFile = function(event) {
+                    var image = document.getElementById('output');
+                    image.src = URL.createObjectURL(event.target.files[0]);
+                    document.getElementById("selectimg").style.display="none";
+                  };
+                  </script>
+        <div class="input-field">
+          <label for="title">Name</label>
+          <input placeholder="Enter your name" id="name" type="text" name="name" required>
+        </div> 
+        <div class="input-field">
+          <label for="title">Date</label>
+          <input placeholder="date" id="name" type="date" name="date" required>
+        </div> 
+          <button class="btn-small" type="submit" name="action">Submit</button>
+      </form>
+      
+  </div>
+  <div style="height: 300px;"></div>
+  
+{%  endblock %}
+
+
+ 
+ 
+
+  

@@ -1,0 +1,162 @@
+{% extends 'new.html' %} {% load crispy_forms_tags %} {% block content %} {% block extra_css %}
+{% load i18n %}
+{% load l10n %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+    .form-row {
+        margin: 50px;
+    }
+    
+    table {
+        padding: 10px;
+    }
+    #formdiv{
+        float: left;  
+
+    }
+    #picimage{
+       padding-left: 0px; 
+    }
+</style>
+{% endblock %}
+<div class="container mb-7" style="margin-top: 10px; ">
+   <br>
+    <h2>{% trans "Houses providing segregated Waste "%}</h2><hr><br>
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+
+    {% endfor %}
+</ul>
+{% endif %}
+<div id = "formdiv">
+    <form method="post" data-url="{{ request.build_absolute_uri|safe }}"  class="form-group" style="text-align:left;">
+        {% csrf_token %}
+        <table style="margin-right: 10px";>{{ form.as_table }} </table> 
+        <br>
+    <centre><button type="submit" style="align-items: center;" class="btn btn-primary">{% trans "Submit" %}</button></centre>
+    
+</form>
+</div>
+    <br>
+    <!-- <form method="post" data-url="{{ request.build_absolute_uri|safe }}"  class="form-group" style="text-align:left;">
+        {% csrf_token %}
+        <table style="margin-right: 10px";>{{ form1.as_table }} </table> 
+        
+         {{ form1.picture.url}}
+        <br>
+    </form> -->
+    <div id = "picimage" >
+    {% for i in diary %}
+        <!-- {{ i.date}} -->
+        <img id ='testimg' src ='{{ i.picture.url }}' style="height:400px; width:550px; border:2px solid #555;"/>
+    {% endfor %}
+    </div>
+    <!-- <div id="pic">
+        {% for i in diary %}
+            {{ i.picture}}
+            <img src= "{{ i.picture.url }}" alt="No image uploaded" style="height:400px; width:550px; border:2px solid #555;"/></br>
+           
+        {% endfor %}
+        
+    </div> -->
+
+   <div style="height: 200px;"></div>
+</div>
+
+<div>
+    <!-- {{ form.errors }}
+  {{ form.non_field_errors }} -->
+
+</div>
+ {% endblock %}
+
+{% block extra_javascript %}
+<script>
+    $(function() {
+        var $docName = $('#id_lane_name').val();
+        console.log($docName)
+        
+        $("#id_lane_name").on('change', function() {
+            var val = $("#id_lane_name").val();
+
+            var $name = {
+                'name': $(this).val()
+            }
+            console.log("name is ",$name)
+            var $endpoint = window.location.href // or localhost/interface
+            $.ajax({
+                method: "GET",
+                url: $endpoint,
+                data: $name,
+                success: handleFormSuccess,
+                error: handleFormError,
+            })
+        })
+        $("#id_date").on('change', function() {
+            var val1 = $("#id_date").val();
+
+            var $name1 = {
+                'name1': $(this).val()
+            }
+            console.log("name1 is ",$name1)
+            var $endpoint = window.location.href // or localhost/interface
+            $.ajax({
+                method: "GET",
+                url: $endpoint,
+                data: $name1,
+                success: handleFormSuccess1,
+                error: handleFormError1,
+            })
+        })
+
+        function handleFormSuccess(data) {
+            console.log(data.zone_id);
+            $("#id_zone_id_id").val(data.zone_id);
+            $("#id_first_attendants_name").val(data.attendant1);
+            $("#id_second_attendants_name").val(data.attendant2);
+            $("#id_supervisor_name").val(data.supervisor);
+           
+            // $("#id_pic").val(data.picture.url);
+        }
+        function handleFormSuccess1(data) {
+            
+            console.log(data.picture);
+                   
+            // $("#id_picture").val(data.picture);
+            // $("#id_picture").val(data.picture);
+            icon_url = '{{ media_url}}' 
+            console.log('"'+icon_url+data.picture+'"');
+            // $('#id_picture').html('<img src='+icon_url+data.picture+ '" />');
+            $('#testimg').empty();
+            $('#testimg').attr('src',icon_url+data.picture);
+            
+             //$('#id_picture').html('Hi');
+            //  $('#id_picture').
+            // $("#id_picture").attr("src",data.picture);
+            // $('#id_picture').show();
+        }
+
+        function handleFormError(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR)
+            console.log(textStatus)
+            console.log(errorThrown)
+        }
+        function handleFormError1(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR)
+            console.log(textStatus)
+            console.log(errorThrown)
+        }
+    })
+</script>
+
+{% endblock %}

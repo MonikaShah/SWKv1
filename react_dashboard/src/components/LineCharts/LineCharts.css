@@ -1,0 +1,11 @@
+.linecharts{
+    display: flex;
+    gap:20px;
+    /* justify-content: space-around; */
+  }
+  
+  
+  .linecharts > *{
+    /* flex-grow: 1; */
+    flex: 1;
+  }

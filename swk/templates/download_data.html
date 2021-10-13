@@ -1,0 +1,202 @@
+{% extends 'new.html' %} {% load static%} {% block content %}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="">
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<style>
+    #wrapper {
+        margin-top: 100px;
+        margin-left: 40px;
+        margin-right: 50px;
+    }
+/*     
+    table {
+        border: 1px solid black;
+        border-collapse: collapse;
+        /* margin-left: 40px; 
+        margin-right: 400px;
+    }
+    
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width: 10%;
+    }*/
+    #tblStocks { 
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+ 
+        #tblStocks td, #tblStocks th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+ 
+        #tblStocks tr:nth-child(even){background-color: #f2f2f2;}
+ 
+        #tblStocks tr:hover {background-color: #ddd;}
+ 
+        #tblStocks th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #294c67;;
+            color: white;
+          }
+
+</style>
+<!-- <form action="coordinator" method="POST">
+    {% csrf_token %} -->
+<div id="wrapper">
+    <!-- <a href="/xyz/">Update Duty Chart</a> -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p></p>
+        <hr> {% for row in excel_data %} {% for cell in row %} {{ cell }}&nbsp;&nbsp; {% endfor %}
+        <br> {% endfor %}
+
+        
+        <h2>Tracksheet Form Details</h2>
+
+        <button onclick="exportData()">
+            <span class="glyphicon glyphicon-download"></span>
+            Download list</button>
+        <div class="table-responsive">
+            <table id="tblStocks" cellpadding="0" cellspacing="0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Houses Reached </th>
+                        <th>Houses Doing Segregation</th>
+                        <th>Houses Giving Mixed Wasted</th>
+                        <th>Dry Waste BF</th>
+                        <th>Dry Waste AF </th>
+                        <th>Wet Waste BF</th>
+                        <th>Wet Waste AF</th>
+                        <th>Zone Name</th>
+                        <th>Attendants</th>
+                        <th>First Attendant </th>
+                        <th>Second Attendant</th>
+                        <th>Time of Visit</th>
+                        <th>Track ID</th>
+                        <th>Date</th>
+                        <th>Supervisor Name</th>
+                        <th>Rejected</th>
+                        <th>Zone ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in datas %}
+
+                    <tr id="somerow">
+                        <td>{{i.num_houses_reached}}</td>
+                        <td>{{i.num_houses_doing_segg}}</td>
+                        <td>{{i.num_houses_giving_mixwaste}}</td>
+                        <td>{{i.drywaste_bf}}</td>
+                        <td>{{i.drywaste_af}}</td>
+                        <td>{{i.wetwaste_bf}}</td>
+                        <td>{{i.wetwaste_af}}</td>
+                        <td>{{i.lane_name}}</td>
+                        <td>{{i.num_attendants}}</td>
+                        <td>{{i.first_attendants_name}}</td>
+                        <td>{{i.second_attendants_name}}</td>
+                        <td>{{i.time_of_visit}}</td>
+                        <td>{{i.track_id}}</td>
+                        <td>{{i.date}}</td>
+                        <td>{{i.supervisor_name}}</td>
+                        <td>{{i.rejected}}</td>
+                        <td>{{i.zone_id_id}}</td>
+                        {% if request.user|has_group:"Editor" %}
+                        <td>
+                            <a href="/edit/{{ i.track_id }}" style="color: rgb(168, 4, 4);"><span class="glyphicon glyphicon-pencil" >Edit</span></a>
+                            <a href="/delete/{{ i.track_id }}" style="color: rgb(122, 23, 23);">Delete</a>
+                        </td>
+                        {% endif %}
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <nav>
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+        <br>
+        <br>
+        <p></p>
+
+    <script>
+            
+            $(document).ready(function() {
+
+            });
+            function exportData(){
+    /* Get the HTML data using Element by Id */
+    var table = document.getElementById("tblStocks");
+ 
+    /* Declaring array variable */
+    var rows =[];
+ 
+      //iterate through rows of table
+    for(var i=0,row; row = table.rows[i];i++){
+        //rows would be accessed using the "row" variable assigned in the for loop
+        //Get each cell value/column from the row
+        column1 = row.cells[0].innerText;
+        column2 = row.cells[1].innerText;
+        column3 = row.cells[2].innerText;
+        column4 = row.cells[3].innerText;
+        column5 = row.cells[4].innerText;
+        column6 = row.cells[5].innerText;
+        column7 = row.cells[6].innerText;
+        column8 = row.cells[7].innerText;
+        column9 = row.cells[8].innerText;
+        column10 = row.cells[9].innerText;
+        column11 = row.cells[10].innerText;
+        column12 = row.cells[11].innerText;
+        column13 = row.cells[12].innerText;
+        column14 = row.cells[13].innerText;
+        column15 = row.cells[14].innerText;
+        column16 = row.cells[15].innerText;
+        column17 = row.cells[16].innerText;
+    /* add a new records in the array */
+        rows.push(
+            [
+                column1,
+                column2,
+                column3,
+                column4,
+                column5,
+                column6,
+                column7,column8,column9,column10,column11,column12,column13,column14,column15,column16,column17
+            ]
+        );
+ 
+        }
+        csvContent = "data:text/csv;charset=utf-8,";
+         /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
+        rows.forEach(function(rowArray){
+            row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
+ 
+        /* create a hidden <a> DOM node and set its download attribute */
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "date-wise-data.csv");
+        document.body.appendChild(link);
+         /* download the data file named "Stock_Price_Report.csv" */
+        link.click();
+}
+         
+        </script> {% endblock %}

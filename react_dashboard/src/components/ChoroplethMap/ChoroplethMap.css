@@ -1,0 +1,59 @@
+.map {
+  /* display: flex; */
+  height: 700px;
+  /* gap: 10px; */
+  background-color: white;
+  padding: 1rem;
+  border-radius: 20px;
+  margin-top: 16px;
+  box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+}
+
+
+/* .map__choropleth {
+  flex: .9;
+  height: 560px;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 20px;
+  margin-top: 16px;
+  box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+} */
+
+.map .leaflet-container {
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* .map__slider {
+  flex: .1;
+  height : 500px;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 20px;
+  margin-top: 16px;
+  box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+} */
+.svg-legend{
+margin-left: 0px;
+}
+.month-drop{
+color: black;
+stroke: black;
+}
+
+.test-label {
+color: #000000 !important;
+}
+/* .legend-div{
+  width: 250px;
+  height: 160px;
+  border-radius: 20px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.336);
+} */
+
+#svg-time-slider{
+  border-radius: 20px;
+  /* background-color: rgba(255, 255, 255, 0.788); */
+}

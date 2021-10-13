@@ -1,0 +1,705 @@
+{% extends 'map/map_new.html' %} {% load static%} {% block extra_map_css %}
+<!-- import psycopg2 -->
+<style>
+    .border {
+        padding: 6px 8px;
+        border-style: groove;
+        border-radius: 5px;
+        margin: 20px;
+    }
+    
+    .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
+    
+    .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+    /* .table{
+  border-collapse: collapse;
+  padding: 50px;
+  font-weight: bold;
+
+  
+  /* background:rgba(191, 149, 233, 0.473); */
+    /* } */
+    
+    */ table,
+    th,
+    td {
+        border-bottom: 1px solid #ddd;
+        border-collapse: collapse;
+        padding: 2px 3px;
+        text-align: center;
+    }
+    
+    th {
+        font-weight: bold;
+    }
+    
+    .legend {
+        line-height: 18px;
+        color: #555;
+    }
+    
+    .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+    }
+    /* css to customize Leaflet default styles  */
+    
+    .leaflet-popup-content-wrapper {
+        background: rgba(0, 0, 0, 0.9);
+        color: #ffffff;
+    }
+    
+    .leaflet-popup-content {
+        font-weight: bold;
+    }
+    /* css for table tbinfo*/
+    
+    #tbinfo {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        font-weight: bolder;
+    }
+    
+    #tbinfo td,
+    #tbinfo th {
+        border: 3px solid #ddd;
+        padding: 8px;
+    }
+    
+    #tbinfo tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    #tbinfo tr:hover {
+        background-color: rgb(194, 92, 92);
+    }
+    
+    #tbinfo th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    #checkboxes {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes label {
+        display: block;
+        text-decoration-color: blue;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes2 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes2 label {
+        display: block;
+        text-decoration-color: blue;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes3 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes3 label {
+        display: block;
+        background-color: white;
+        text-decoration-color: blue;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes7 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes7 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes2 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes2 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes5 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes5 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+    }
+    
+    #checkboxes4 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+    #checkboxes4 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+    }
+    /* Popup container - can be anything you want */
+    
+    .popup {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        left: 50%;
+        margin-right: -5px;
+        border-width: 5px;
+    }
+    /* The actual popup */
+    
+    .popup .popuptext {
+        visibility: hidden;
+        width: 160px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -80px;
+    }
+    /* Popup arrow */
+    
+    .popup .popuptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+    }
+    /* Toggle this class - hide and show the popup */
+    
+    .popup .show {
+        visibility: visible;
+        -webkit-animation: fadeIn 1s;
+        animation: fadeIn 1s;
+    }
+    /* Add animation (fade in the popup) */
+    
+    @-webkit-keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .form-control {
+        width: 160px;
+    }
+</style>
+
+{% endblock extra_map_css%} {% block map_content%}
+<!-- {% block sidebar %}
+  {% endblock %} -->
+
+
+
+<div id="side-bar" style="background-color:  rgba(255, 255, 255);">
+    <!-- side-bar container -->
+    <div class="mobileShow">
+
+        <div style="text-align: center">
+            <button style="display: inline-block ;position: relative; background: #000; opacity: 0.60;" id="closebutton" name="closebutton" class="btn btn-secondary"><span class="fa fa-bars"></span></button>
+        </div>
+
+    </div>
+    <div>
+        <div class="text-center border">
+
+
+            <form id="projectList" style="width: 100%">
+
+                <form>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes3()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> Geographical Hierarchy</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes3">
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{admin}" onchange="getBoundaryru(this)"><span> Admin Boundary</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{lanes}" onchange="getBoundaryru(this)"><span> Worli Koliwada Lanes</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{corbound}" onchange="getBoundaryru(this)"><span> Corporator Ward Boundary</span></label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes7()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> Zonal Geometry</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes7">
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{zone1}" onchange="getBoundaryru(this)"><span> Zone 1(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{zone2}" onchange="getBoundaryru(this)"><span>Zone 2(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{zone3}" onchange="getBoundaryru(this)"><span> Zone 3(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{zone4}" onchange="getBoundaryru(this)"><span>Zone 4(coming up soon...)</span></label>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="putWMSkiosk()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; ">Kiosks Location</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes2">
+
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{green_kiosk}" onchange="getBoundarytrib(this)"><span> Green Kiosks(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{blue_kiosk}" onchange="getBoundarytrib(this)"><span> Blue Kiosks(coming up soon...)</span></label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes5()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> Seggregation Centres and Pits</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes5">
+
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{jany}" onchange="getBoundarytrib(this)"><span> Compost Pit 1(coming up soon...) </span></label>
+                            </div>
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{}" onchange="getBoundarytrib(this)" disabled=""><span> Compost Pit 2(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{}" onchange="getBoundarytrib(this)" disabled=""><span> Seggregation Centres(coming up soon...)</span></label>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes4()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> Public Places & Amenities</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes4">
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{Gsc}" onchange="GetSelectedfac(this);buffer(this);"><span> Public Toilets(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{ASch}" onchange="GetSelectedfac(this);buffer(this);"><span> Schools(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{iti}" onchange="GetSelectedfac(this);buffer(this);"><span> Educational Institutes(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{bif}" onchange="GetSelectedfac(this);buffer(this);"><span> Terrace Garden (coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{iti}" onchange="GetSelectedfac(this);buffer(this);"><span> Nutri Gardens(coming up soon...)</span></label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="{bif}" onchange="GetSelectedfac(this);buffer(this);"><span> Open Space (coming up soon...)</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="checkboxes4">
+                        <div class="checkbox" id="boundary">
+                            <label><input type="checkbox" value="{Gsc}" onchange="putWFSChloro();"><span> Choloropleth Map </span></label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{ASch}" onchange="GetSelectedfac(this);buffer(this);"><span> Schools(coming up soon...)</span></label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{iti}" onchange="GetSelectedfac(this);buffer(this);"><span> Educational Institutes(coming up soon...)</span></label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{bif}" onchange="GetSelectedfac(this);buffer(this);"><span> Terrace Garden (coming up soon...)</span></label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{iti}" onchange="GetSelectedfac(this);buffer(this);"><span> Nutri Gardens(coming up soon...)</span></label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{bif}" onchange="GetSelectedfac(this);buffer(this);"><span> Open Space (coming up soon...)</span></label>
+                        </div>
+                    </div>
+        </div>
+
+        </form>
+
+
+        </form>
+        {% endblock map_content%} {% block extra_map_javascript%}
+        <script>
+            // *****************
+            // let listState = {'Maharashtra':['Maharashtra',19.7515,75.7139]}
+            let listDistrict = {
+                Akola: ["Akola", 20.7002, 77.0082],
+                Amravati: ["Amravati", 20.9374, 77.7796],
+                Buldhana: ["Buldhana", 20.4561, 76.3637],
+                Yavatmal: ["Yavatmal", 20.3888, 78.1204],
+                Washim: ["Washim", 20.139, 77.1025],
+                Aurangabad: ["Aurangabad", 19.8762, 75.3433],
+                Beed: ["Beed", 18.9891, 75.7601],
+                Jalna: ["Jalna", 19.8297, 75.88],
+                Osmanabad: ["Osmanabad", 18.207, 76.1784],
+                Nanded: ["Nanded", 19.1383, 77.321],
+                Latur: ["Latur", 18.4088, 76.5604],
+                Parbhani: ["Parbhani", 19.2644, 76.6413],
+                Hingoli: ["Hingoli", 19.5781, 77.1025],
+                Thane: ["Thane", 19.2183, 72.9781],
+                Palghar: ["Palghar", 19.6936, 72.7655],
+                Raigad: ["Raigad", 18.5158, 73.1822],
+                Ratnagiri: ["Ratnagiri", 16.9902, 73.312],
+                Sindhudurg: ["Sindhudurg", 16.3492, 73.5594],
+                Bhandara: ["Bhandara", 21.0736, 79.8297],
+                Gadchiroli: ["Gadchiroli", 19.4969, 80.2767],
+                Chandrapur: ["Chandrapur", 19.9615, 79.2961],
+                Gondia: ["Gondia", 21.4624, 80.221],
+                Nagpur: ["Nagpur", 21.1458, 79.0882],
+                Wardha: ["Wardh<a", 20.7453, 78.6022],
+                Ahmednagar: ["Ahmednagar", 19.0948, 74.748],
+                Dhule: ["Dhule", 20.9042, 74.7749],
+                Jalgaon: ["Jalgaon", 21.0077, 75.5626],
+                Nandurbar: ["Nandurbar", 21.7469, 74.124],
+                Nashik: ["Nashik", 19.9975, 73.7898],
+                Kolhapur: ["Kolhapur", 16.705, 74.2433],
+                Pune: ["Pune", 18.5204, 73.8567],
+                Sangli: ["Sangli", 16.8524, 74.5815],
+                Satara: ["Satara", 17.6805, 74.0183],
+                Solapur: ["Solapur", 17.6599, 74.9064],
+            }
+
+
+            const domain = ['https://makerghat.urbansciences.in/', 'http://localhost/'];
+            var rootUrl = domain[0] + 'geoserver/geonode/ows';
+
+            var defaultParameters = {
+                service: 'WFS',
+                version: '1.0.0',
+                request: 'GetFeature',
+                outputFormat: 'json'
+            };
+
+            var wms_legend;
+            var info = L.control();
+            var attribute_table = L.control({
+                position: 'bottomright'
+            });
+            var LayerList = [];
+            var tempParameter = defaultParameters;
+            // var pointLayerList = [];
+            // var newLayerList = [];
+            // var faciLayerList = [];
+            // var tribLayerList = [];
+            // var TRIBLAYER, insti_content;
+            // let tableurl;
+            // var searchControl;
+
+
+            // <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+        </script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+            var expanded = false;
+
+            function showCheckboxes3() {
+                var checkboxes = document.getElementById("checkboxes3");
+                if (!expanded) {
+                    checkboxes3.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes3.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function showCheckboxes7() {
+                var checkboxes = document.getElementById("checkboxes7");
+
+                if (!expanded) {
+                    checkboxes7.style.display = "block";
+                    expanded = true;
+                } else {
+
+                    checkboxes7.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function putWMSkiosk() {
+
+                var wms_layer = L.tileLayer.wms('https://makerghat.urbansciences.in/geoserver/wms', {
+                    layers: "geonode:kiosks_3nov",
+                    format: 'image/png',
+                    opacity: 0.5,
+
+                });
+                wms_layer.addTo(mymap);
+                mymap.setView([19.023, 72.816], 16);
+                newLayerList.push(wms_layer);
+            }
+
+
+            function showCheckboxes2() {
+                var checkboxes = document.getElementById("checkboxes2");
+                if (!expanded) {
+                    checkboxes2.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes2.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function showCheckboxes5() {
+                var checkboxes = document.getElementById("checkboxes5");
+                if (!expanded) {
+                    checkboxes5.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes5.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function showCheckboxes4() {
+                var checkboxes = document.getElementById("checkboxes4");
+                if (!expanded) {
+                    checkboxes4.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes4.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function getBoundaryru(obj) {
+                let boundary = obj.value;
+                if ($(obj).is(":checked")) {
+                    if (boundary == "{admin}")
+                        putWMSru("geonode:worli_pincodes_30_25_18");
+                    else if (boundary == "{lanes}")
+                        putWMSru("geonode:worli_hand_drawn_update_26oct");
+                    else if (boundary == "{corbound}")
+                        putWMSru("geonode:ward_193_updated_3nov");
+
+
+                } else {
+                    // alert('in removeWM'+obj.value);
+                    if (boundary == "{admin}")
+                        removeWMS("geonode:worli_pincodes_30_25_18");
+                    else if (boundary == "{lanes}")
+                        removeWMS("geonode:worli_hand_drawn_update_26oct");
+
+                };
+
+
+            }
+
+            function getBoundarytrib(obj) {
+                let boundary = obj.value;
+                if ($(obj).is(":checked")) {
+                    if (boundary == "{green_kiosk}")
+                        putWMStrib("geonode:maha_tribal_villages_and_towns", "at");
+
+                    else if (boundary == "{blue_kiosk}")
+                        putWMStrib("geonode:maha_tribal_villages_and_towns", "m");
+
+                } else {
+                    if (boundary == "{green_kiosk}")
+                        removeWMStrib("category='green_kiosk'");
+
+                    else if (boundary == "{blue_kiosk}")
+                        removeWMStrib("category='blue_kiosk'");
+
+                }
+            }
+
+
+
+            function putWMSru(layer) {
+
+                if (layer == "geonode:worli_pincodes_30_25_18") {
+                    //alert("Reached ad map");
+
+                    var wms_layer = L.tileLayer.wms('https://makerghat.urbansciences.in/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        opacity: 0.5,
+                    });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.003, 72.8168], 14);
+                    newLayerList.push(wms_layer);
+                } else if (layer == "geonode:worli_hand_drawn_update_26oct") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://makerghat.urbansciences.in/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+
+                    });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.02, 72.818], 17);
+                    newLayerList.push(wms_layer);
+                    console.log(wms_layer);
+                } else if (layer == "geonode:ward_193_updated_3nov") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://makerghat.urbansciences.in/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+
+                    });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.02, 72.818], 14);
+                    newLayerList.push(wms_layer);
+                    console.log(wms_layer);
+                }
+            }
+
+            function removeWMS(unchecked_layer) {
+                //    alert(unchecked_layer);
+                newLayerList.forEach((layer, index) => {
+                    if (layer.options.layers === unchecked_layer) {
+                        mymap.removeLayer(layer);
+                        newLayerList.splice(index, 1);
+                    }
+                });
+            }
+
+            //Cholorpleth maps functions    
+            function putWFSChloro() {
+
+                tempParameter.typeName = "geonode:maha_demography";
+                tempParameter.cql_filter = "district_n='" + demoLayerCode[index] + "'";
+                tempParameter.propertyName = "id,the_geom,district_n,area_name,tot_p,tot_f,tot_m,p_ill,p_lit";
+                legend.addTo(mymap);
+                info.addTo(mymap);
+                displayPolygon(tempParameter, districtLat[index], districtLong[index]);
+                myDistrictLayerList.push(demoLayerCode[index]);
+            }
+
+
+            function getColor(d) {
+                return d > 1000 ? '#800026' :
+                    d > 500 ? '#BD0026' :
+                    d > 200 ? '#E31A1C' :
+                    d > 100 ? '#FC4E2A' :
+                    d > 50 ? '#FD8D3C' :
+                    d > 20 ? '#FEB24C' :
+                    d > 10 ? '#FED976' :
+                    '#FFEDA0';
+            }
+
+            function style(feature) {
+                return {
+                    fillColor: getColor(feature.properties.density),
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                };
+            }
+
+            L.geoJson(statesData, {
+                style: style
+            }).addTo(map);
+
+            function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+            }
+
+            function resetHighlight(e) {
+                geojson.resetStyle(e.target);
+            }
+        </script>
+        {% endblock extra_map_javascript %}

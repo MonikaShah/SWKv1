@@ -1,0 +1,274 @@
+{% load static %} {% load has_group %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Swachh Worli Koliwada</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Lato:400,300,700,900" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"> -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/venobox/venobox.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script> -->
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <script src="{% static 'assets/js/popper.js' %}"></script>
+    <!-- For close button on messages -->
+    <script src= "https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity= 
+"sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"crossorigin="anonymous"></script>
+   
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-197940159-2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'UA-197940159-2');
+</script>
+
+    <!-- =======================================================
+  * Template Name: Amoeba - v3.0.0
+  * Template URL: https://bootstrapmade.com/free-one-page-bootstrap-template-amoeba/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+    {% block extra_css %} 
+    <!-- .logo-container {
+        display: flex;
+        justify-content: space-between;
+      } -->
+    .navbar .navbar-collapse {
+        text-align: center;
+        width:20%;
+        justify-content: center;
+    }
+    .navbar{
+        justify-content: center;
+    }
+     
+    {% endblock %}
+
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark flex-column align-items-stretch">
+        
+        <div class=" d-flex align-items-center" style="justify-content: space-evenly;">
+            <!-- <img class="header-left" src="{% static 'images/IDFC_FIRST_Bank_logo.jpg' %}" style="height: 60px; width: 120px;overflow: hidden;"> -->
+            <img class="header-left" src="{% static 'images/IDFC-FIRST-Bank-logo-123-X-61.png' %}" style="height: 60px; width: 120px;overflow: hidden;">
+            <img class="header-center" src="{% static 'images/sms_logo.jpg' %}" style="height: 60px; width: 80px;overflow: hidden;">
+            <img class="header-right" src="{% static 'images/mcgm_logo.jpg' %}" style="height: 60px; width: 60px;overflow: hidden;">              
+        </div>
+        <div>
+            <!-- {{ Visitor_count }} -->
+        </div>
+        <nav class ="nav-menu d-none d-lg-block">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                <a href="{% url 'homepage' %}" class="nav-link text-white" >{% trans "Home" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'aboutus' %}" class="nav-link text-white">{% trans "About Us" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'swk_map' %}" class="nav-link text-white">{% trans "Maps" %}</a>
+                </li>
+                {% if request.user|has_group:"DataManager" %}
+                <!-- <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      Forms
+                    </a>
+                  
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <li><a class="dropdown-item" href="{% url 'trackform_det' %}">{% trans "DataManager-EntryForm" %}</a></li>
+                      <li><a class="dropdown-item" href="{% url 'show' %}">{% trans "View Daily Entry Data" %}</a></li>
+                      <li><a class="dropdown-item" href="https://ee.humanitarianresponse.info/x/Y3Ji0ej7">{% trans "OneTimeSurvey Form" %}</a></li>
+                    </ul>
+                  </div> -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      {% trans "Forms" %}
+                    </a>
+                  
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <li><a class="dropdown-item" href="{% url 'trackform_det' %}">{% trans "DataManager-EntryForm" %}</a></li>
+                      <li><a class="dropdown-item" href="{% url 'show' %}"class="nav-link text-white">{% trans "View Daily Entry Data" %}</a></li>
+                      <li><a class="dropdown-item" href="https://ee.humanitarianresponse.info/x/Y3Ji0ej7" class="nav-link text-white">{% trans "OneTimeSurvey Form" %}</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="{% url 'report' %}" class="nav-link text-white">{% trans "Report" %}</a>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_group:"Demo-Audio" %}
+                <li class="nav-item">
+                    <a href="{% url 'audiogrievance' %}" class="nav-link text-white">{% trans "Audio Grievance" %}</a>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_group:"supervisor" %}
+                <!-- <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      {% trans "Forms" %}
+                    </a>
+                  
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <li><a class="dropdown-item" href="{% url 'trackform' %}"class="nav-link text-white">{% trans "Daily Entry Form" %}</a></li>
+                      <li><a class="dropdown-item" href="{% url 'show' %}"class="nav-link text-white">{% trans "View Daily Entry Data" %}</a></li>
+                      <li><a class="dropdown-item" href="https://ee.humanitarianresponse.info/x/Y3Ji0ej7" class="nav-link text-white">{% trans "OneTimeSurvey Form" %}</a></li>
+                    </ul>
+                  </div> -->
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                      {% trans "Forms" %}
+                    </a>
+                  
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <li><a class="dropdown-item" href="{% url 'trackform' %}"class="nav-link text-white">{% trans "Daily Entry Form" %}</a></li>
+                      <li><a class="dropdown-item" href="{% url 'show' %}"class="nav-link text-white">{% trans "View Daily Entry Data" %}</a></li>
+                      <li><a class="dropdown-item" href="https://ee.humanitarianresponse.info/x/Y3Ji0ej7" class="nav-link text-white">{% trans "OneTimeSurvey Form" %}</a></li>
+                      <li><a href="{% url 'uploadimage' %}" class="waves-effect">{% trans "Upload Image of DailyCollection" %}</a></li>
+                    </ul>
+                </li>
+                   
+                    <li class="nav-item">
+                        <a href="{% url 'report' %}" class="nav-link text-white">{% trans "Report" %}</a>
+                    </li>
+                {% endif %}
+                    <!-- <li class="nav-item">
+                        <a href="{% url 'uploadimage' %}" class="nav-link text-white">{% trans "Upload Image" %}</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}"class="nav-link text-white">{% trans "Dashboard" %}</a>
+                    </li>
+                
+
+                <li class="nav-item">
+                    <a href="{% url 'faq' %}" class="nav-link text-white">{% trans "FAQ" %}</a>
+                </li>
+                <li>
+                    <a href="{% url 'grievance' %}" class="nav-link text-white">{% trans "Grievance" %}</a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'rating' %}" class="nav-link text-white">{% trans "Feedback" %}</a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'contact' %}" class="nav-link text-white">{% trans "Contact Us" %}</a>
+                </li>
+              
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link text-white">{% trans "Logout" %}</a>
+                    </li>
+                    {% else %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link text-white">{% trans "Login" %}</a>
+                    </li>
+                {% endif %}
+
+            
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}" />            
+                <select name="language" style="width: auto;" id="">
+                  {% get_current_language as LANGUAGE_CODE %}
+                  {% get_available_languages as LANGUAGES %}
+                  {% get_language_info_list for LANGUAGES as languages %}
+                  {% for language in languages %} 
+                      <option value="{{ language.code }}"
+                        {% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                      </option>    {% endfor %}
+                </select>  <input type = "submit" value ="Go">
+            </form>
+            <!-- hitwebcounter Code START -->
+<!-- <a href="https://www.hitwebcounter.com" target="_blank">
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7818435&style=0001&nbdigits=5&type=ip&initCount=0" title="Free Counter" Alt="web counter"   border="0" /></a>    -->
+    <!-- <h5 class="nav-item text-white" style ="float: right;line-height: 2.0;"> &nbsp;&nbsp;Visitors Count : {{ Visitor_count }} </h5> -->
+        </ul>
+        
+        </nav>
+    </nav>
+    <!--  -->
+    
+    <!-- End #header -->
+
+    <!-- ======= Hero Section ======= -->
+
+    <!-- #hero -->
+    
+    <main>
+        {% block content%}
+        
+        {% endblock%}
+       
+    </main>
+
+
+    <!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    
+   <!-- <footer class="text-center text-white " style="background-color: #21081a;bottom: 0px;"> -->
+       <!-- <footer class="text-center text-white fixed-bottom" style="background-color: #21081a;bottom: 0px;"> -->
+        <footer class="text-center text-white" style="background-color: #21081a;bottom: 0px;">
+       
+  <!-- Copyright -->
+    <!-- <div class="text-justify p-3" style="background-color: rgba(0, 0, 0, 0.2);"raj> -->
+    <div class="p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <img class="logo" style="margin-top: 5px; height: 80px; width: 120px;" src="{% static 'images/Logo-Unit_SWK.jpg' %}" alt="My image">
+        <a class="text-white"><p>Developed by Respirer Living Sciences Pvt. Ltd using FOSS project Communitygis.net supported by CTARA IITB.</p>
+            <p>Software Developer  Team: Monika Shah ( Respirer Living Science Ltd ), Shweta Panwar from CTARA ,  Animesh Nautiyal from CTARA <br>under guidance of Prof. Jitendra Shah (CTARA).</p>
+        
+        
+        </a>
+    </div>
+    <!-- Copyright -->
+    </footer>
+    <!-- End #footer -->
+    {% block extra_javascript %} 
+    
+    {% endblock %}
+
+    <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+    
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+    <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/venobox/venobox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+  }
+  
+  body {
+    background-color: #f5f6fa;
+  }
+  
+  .app{
+      margin: 20px 0px;
+      padding: 40px 0px;
+  }
+  
+  .app__header{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 50px;
+    color:lightgreen;
+    font-size: 1.5rem;
+  }
+  
+  
+  
+  
+  .app__dropdown{
+    flex:.5;
+  }
+  
+  .app__info > *{
+    flex:1;
+    margin:20px;
+  }
+  
+  
+  .app_infobox{
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .app__stat{
+    display: flex;
+    /* justify-content: space-around; */
+    margin-bottom: 50px;
+  
+  }
+  
+  .app__stat > *{
+    padding: 20px;
+  }
+  
+  .app__stat__map{
+    flex: 1;
+  }
+  
+  .app__stat__barchart{
+    flex: .8;
+  }
+  
+  .app__stat__barchart:first-child:first-child{
+    margin-left: 20px ;
+  }
+  .app__linechart{
+    display: flex;
+    gap:20px;
+    /* justify-content: space-around; */
+  }
+  
+  
+  .app__linechart > *{
+    /* flex-grow: 1; */
+    flex: 1;
+  }
+  
+  
+  .app__stat__barchart{
+    /* margin-top: 100px; */
+    /* padding-top: 100px; */
+  }
+  
+  .chartjs-render-monitor{
+    margin-top: 100px;
+    /* margin-left: 10px; */
+    /* padding-left: 20px; */
+  }
+  
+  
+  @media (max-width: 990px){
+    .app > *{ 
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  
+  }

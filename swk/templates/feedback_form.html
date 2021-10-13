@@ -1,0 +1,90 @@
+{% extends 'new.html' %}  {% load crispy_forms_tags %}
+{% load static%} {% block content %}{% block extra_css %}
+{% load i18n %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+<style>
+    .form-row {
+        margin: 50px;
+    }
+    
+    table {
+        padding: 10px;
+    }
+    
+    #feedback_div{
+        display: none;
+        display: block;
+    }
+</style>
+{% endblock %}
+<div class="container mb-7" style="margin-top: 10px;">
+    <h2>{% trans "Grievance Form "%}</h2><hr><br>
+    <!-- <h1 class='text-center mt-5'>Feedback / Complaint Form</h1> -->
+
+    <form method="post" data-url="{{ request.build_absolute_uri|safe }}" class="form-group" style="text-align:left;">
+        <!-- {{ form.media }} -->
+        {% csrf_token %}
+        <!-- <br><button id ="buttonid" onclick="getLocation()">Get Current Location </button>
+        <p id="demo"></p>
+        <p id="lati"></p>
+        <p id="longi"></p>
+        <script>
+            var x = document.getElementById("demo");
+            
+            function getLocation() {
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+              } else { 
+                x.innerHTML = "Geolocation is not supported by this browser.";
+              }
+            }
+            
+            function showPosition(position) {
+              var latitude = position.coords.latitude;
+              var longitude = position.coords.longitude;
+              var lat = position.coords.latitude.toFixed(2);
+              var long = position.coords.longitude.toFixed(2);
+              x.innerHTML = "Latitude: " + lat +
+              "<br>Longitude: " + long;
+              lati.innerHTML = latitude;
+              longi.innerHTML = longitude;
+                          
+                if (lat == '19.12' && long == '72.89') {
+                    document.getElementById('feedback_div').style.display = 'block'; 
+                    
+                }
+                else if (lat == '19.08' && long == '72.91'){
+                    document.getElementById('feedback_div').style.display = 'block'; 
+                }
+                else {
+                    document.getElementById('feedback_div').style.display = 'none'; 
+                }
+                document.getElementsByName('latiude').value = latitude;
+            }
+           
+                         
+        </script> -->
+        <div class="container mb-7" style="margin-top: 10px;" id = "feedback_div">
+            <table table style="margin-right: 10px";>{{ form.as_table}}</table> <br>
+            
+            <button type="submit" style="align-items: center;" class="btn btn-primary">Send Mail</button><br>
+        </div>
+    </form>
+</div><br>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+    <!-- <ul class="errorlist"><li>done<ul class="errorlist"><li>This field is required.</li></ul></li></ul> -->
+    {% endfor %}
+</ul>
+{% endif %} {% endblock %} 

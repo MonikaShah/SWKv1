@@ -1,0 +1,401 @@
+{% extends 'new.html' %} 
+{% load i18n %}
+{% block content %}{% block extra_css %}
+
+<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+<style>
+.rating1,.rating2, .rating3,.rating4,.rating5 {
+    float:left;
+}
+
+/* :not(:checked) is a filter, so that browsers that don’t support :checked don’t 
+   follow these rules. Every browser that supports :checked also supports :not(), so
+   it doesn’t make the test unnecessarily selective */
+.rating1:not(:checked) > input,
+.rating2:not(:checked) > input,
+.rating3:not(:checked) > input,
+.rating4:not(:checked) > input,
+.rating5:not(:checked) > input {
+    position:absolute;
+    
+    clip:rect(0,0,0,0);
+}
+
+.rating1:not(:checked) > label,
+.rating2:not(:checked) > label,
+.rating3:not(:checked) > label,
+.rating4:not(:checked) > label,
+.rating5:not(:checked) > label {
+    float:right;
+    width:1em;
+    padding:0 .1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:200%;
+    line-height:1.2;
+    color:#ddd;
+    text-shadow:1px 1px #bbb, 2px 2px #666, .1em .1em .2em rgba(0,0,0,.5);
+}
+
+.rating1:not(:checked) > label:before ,
+.rating2:not(:checked) > label:before ,
+.rating3:not(:checked) > label:before,
+.rating4:not(:checked) > label:before,
+.rating5:not(:checked) > label:before {
+    content: '★ ';
+}
+
+.rating1 > input:checked ~ label ,
+.rating2 > input:checked ~ label,
+.rating3 > input:checked ~ label ,
+.rating4 > input:checked ~ label ,
+.rating5 > input:checked ~ label {
+    color: #f70;
+    text-shadow:1px 1px #c60, 2px 2px #940, .1em .1em .2em rgba(0,0,0,.5);
+}
+
+.rating1:not(:checked) > label:hover,
+.rating1:not(:checked) > label:hover ~ label ,
+.rating2:not(:checked) > label:hover,
+.rating2:not(:checked) > label:hover ~ label ,
+.rating3:not(:checked) > label:hover,
+.rating3:not(:checked) > label:hover ~ label ,
+.rating4:not(:checked) > label:hover,
+.rating4:not(:checked) > label:hover ~ label ,
+.rating5:not(:checked) > label:hover,
+.rating5:not(:checked) > label:hover ~ label {
+    color: gold;
+    text-shadow:1px 1px goldenrod, 2px 2px #B57340, .1em .1em .2em rgba(0,0,0,.5);
+}
+
+.rating1 > input:checked + label:hover,
+.rating1 > input:checked + label:hover ~ label,
+.rating1 > input:checked ~ label:hover,
+.rating1 > input:checked ~ label:hover ~ label,
+.rating1 > label:hover ~ input:checked ~ label,
+
+.rating2 > input:checked + label:hover,
+.rating2 > input:checked + label:hover ~ label,
+.rating2 > input:checked ~ label:hover,
+.rating2 > input:checked ~ label:hover ~ label,
+.rating2 > label:hover ~ input:checked ~ label
+
+.rating3 > input:checked + label:hover,
+.rating3 > input:checked + label:hover ~ label,
+.rating3 > input:checked ~ label:hover,
+.rating3 > input:checked ~ label:hover ~ label,
+.rating3 > label:hover ~ input:checked ~ label,
+
+.rating4 > input:checked + label:hover,
+.rating4 > input:checked + label:hover ~ label,
+.rating4 > input:checked ~ label:hover,
+.rating4 > input:checked ~ label:hover ~ label,
+.rating4 > label:hover ~ input:checked ~ label,
+
+.rating5 > input:checked + label:hover,
+.rating5 > input:checked + label:hover ~ label,
+.rating5 > input:checked ~ label:hover,
+.rating5 > input:checked ~ label:hover ~ label,
+.rating5 > label:hover ~ input:checked ~ label
+ {
+    color: #ea0;
+    text-shadow:1px 1px goldenrod, 2px 2px #B57340, .1em .1em .2em rgba(0,0,0,.5);
+}
+
+.rating1 > label:active ,
+.rating2 > label:active ,
+.rating3 > label:active ,
+.rating4 > label:active ,
+.rating5 > label:active {
+    position:relative;
+    top:2px;
+    left:2px;
+}
+
+/* end of Lea's code */
+
+
+/*
+ * Clearfix from html5 boilerplate
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/*
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* my stuff */
+#status, button {
+    margin: 20px 0;
+}
+table{
+
+  /* border: 1px solid black; */
+  border-image: url('/media/examples/border-diamonds.png') 30 / 19px round;
+}
+
+</style>
+{% endblock %}
+<div class="container mb-7" ><br>
+    <!-- <form id="ratingForm" method="POST" class="form-group" style="text-align:left;"> -->
+      <!--  -->
+    <form action="/rating/" method="POST" class="form-group" style="text-align:left;">
+        {% csrf_token %}
+    <h2>{% trans "Feedback" %}</h2>
+    <hr>
+    <br><b>
+    <label for="your_name">{% trans "Your name" %}: &nbsp;&nbsp;&nbsp;</label><input id="your_name" type="text" name="name"><br>
+    <label for="your_email">{% trans "Your email" %}: &nbsp;&nbsp;&nbsp;</label><input id="your_email" type="text" name="email"><br>
+    <label for="your_mobile">{% trans "Your mobile" %}: &nbsp;</label><input id="your_mobile" type="text" name="mobile"><br>
+</b><hr>
+    <h3>Please rate </h3>
+  
+        
+    <p><b><label for="rating1">1. {% trans "How do you find overall daily collection service of SWK ?" %}</label></b>
+   
+    <div id="status"></div>
+    
+            <fieldset class="rating1">
+                <!-- <legend>Please rate:</legend> -->
+                <input type="radio" id="star5" name="rating1" value="5" /><label for="star5" title="Excellent!">5 stars</label>
+                <input type="radio" id="star4" name="rating1" value="4" /><label for="star4" title="Very good">4 stars</label>
+                <input type="radio" id="star3" name="rating1" value="3" /><label for="star3" title="Good">3 stars</label>
+                <input type="radio" id="star2" name="rating1" value="2" /><label for="star2" title="Poor">2 stars</label>
+                <input type="radio" id="star1" name="rating1" value="1" /><label for="star1" title="Very Poor">1 star</label>
+            </fieldset>
+            <div class="clearfix"></div>
+            
+    </p>
+    <p><b><label for="rating2">2. {% trans "How suitable  is the timing of SWK collection  to you?" %}</label></b>
+        <div id="status2"></div>
+            <fieldset class="rating2">
+                <input type="radio" id="star5-2" name="rating2" value="5" /><label for="star5-2" title="Excellent!">5 stars</label>
+                <input type="radio" id="star4-2" name="rating2" value="4" /><label for="star4-2" title="Very good">4 stars</label>
+                <input type="radio" id="star3-2" name="rating2" value="3" /><label for="star3-2" title="Good">3 stars</label>
+                <input type="radio" id="star2-2" name="rating2" value="2" /><label for="star2-2" title="Poor">2 stars</label>
+                <input type="radio" id="star1-2" name="rating2" value="1" /><label for="star1-2" title="Very Poor">1 star</label>
+            </fieldset>
+            <div class="clearfix"></div>
+
+            
+        </p>
+    <p><b><label for="rating3">3. {% trans "How do you find the SWK website on mobile ?" %}</label></b>
+        <div id="status3"></div>
+        <fieldset class="rating3">
+            <input type="radio" id="star5-3" name="rating3" value="5" /><label for="star5-3" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-3" name="rating3" value="4" /><label for="star4-3" title="Very good">4 stars</label>
+            <input type="radio" id="star3-3" name="rating3" value="3" /><label for="star3-3" title="Good">3 stars</label>
+            <input type="radio" id="star2-3" name="rating3" value="2" /><label for="star2-3" title="Poor">2 stars</label>
+            <input type="radio" id="star1-3" name="rating3" value="1" /><label for="star1-3" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+    <p><b><label for="rating4">4. {% trans "How useful is the compost for your kitchen garden ?" %}</label></b>
+        <div id="status4"></div>
+        <fieldset class="rating4">
+            <input type="radio" id="star5-4" name="rating4" value="5" /><label for="star5-4" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-4" name="rating4" value="4" /><label for="star4-4" title="Very good">4 stars</label>
+            <input type="radio" id="star3-4" name="rating4" value="3" /><label for="star3-4" title="Good">3 stars</label>
+            <input type="radio" id="star2-4" name="rating4" value="2" /><label for="star2-4" title="Poor">2 stars</label>
+            <input type="radio" id="star1-4" name="rating4" value="1" /><label for="star1-4" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+    <p><b><label for="rating5">5. {% trans "Are you able to communicate your problems to SWK supervisors ? " %}</label></b>
+        <div id="status5"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-5" name="rating5" value="5" /><label for="star5-5" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-5" name="rating5" value="4" /><label for="star4-5" title="Very good">4 stars</label>
+            <input type="radio" id="star3-5" name="rating5" value="3" /><label for="star3-5" title="Good">3 stars</label>
+            <input type="radio" id="star2-5" name="rating5" value="2" /><label for="star2-5" title="Poor">2 stars</label>
+            <input type="radio" id="star1-5" name="rating5" value="1" /><label for="star1-5" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating6">6. {% trans "Information received on Solid Waste Management " %}</label></b>
+        <div id="status6"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-6" name="rating6" value="5" /><label for="star5-6" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-6" name="rating6" value="4" /><label for="star4-6" title="Very good">4 stars</label>
+            <input type="radio" id="star3-6" name="rating6" value="3" /><label for="star3-6" title="Good">3 stars</label>
+            <input type="radio" id="star2-6" name="rating6" value="2" /><label for="star2-6" title="Poor">2 stars</label>
+            <input type="radio" id="star1-6" name="rating6" value="1" /><label for="star1-6" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating7">7. {% trans "The services received from the Cleanliness Workers " %}</label></b>
+        <div id="status7"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-7" name="rating7" value="5" /><label for="star5-7" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-7" name="rating7" value="4" /><label for="star4-7" title="Very good">4 stars</label>
+            <input type="radio" id="star3-7" name="rating7" value="3" /><label for="star3-7" title="Good">3 stars</label>
+            <input type="radio" id="star2-7" name="rating7" value="2" /><label for="star2-7" title="Poor">2 stars</label>
+            <input type="radio" id="star1-7" name="rating7" value="1" /><label for="star1-7" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating8">8. {% trans "Segregation of Waste " %}</label></b>
+        <div id="status8"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-8" name="rating8" value="8" /><label for="star5-8" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-8" name="rating8" value="8" /><label for="star4-8" title="Very good">4 stars</label>
+            <input type="radio" id="star3-8" name="rating8" value="8" /><label for="star3-8" title="Good">3 stars</label>
+            <input type="radio" id="star2-8" name="rating8" value="8" /><label for="star2-8" title="Poor">2 stars</label>
+            <input type="radio" id="star1-8" name="rating8" value="8" /><label for="star1-8" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating9">9. {% trans "The process involved in systematic recycling/disposal of Wet waste, Dry waste and Hazardous Waste." %} </label></b>
+        <div id="status9"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-9" name="rating9" value="5" /><label for="star5-9" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-9" name="rating9" value="4" /><label for="star4-9" title="Very good">4 stars</label>
+            <input type="radio" id="star3-9" name="rating9" value="3" /><label for="star3-9" title="Good">3 stars</label>
+            <input type="radio" id="star2-9" name="rating9" value="2" /><label for="star2-9" title="Poor">2 stars</label>
+            <input type="radio" id="star1-9" name="rating9" value="1" /><label for="star1-9" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating10">10. {% trans "Waste Management Awareness campaigns conducted by the team in your neighborhood. " %}</label></b>
+        <div id="status10"></div>
+        <fieldset class="rating5">
+            <input type="radio" id="star5-10" name="rating10" value="5" /><label for="star5-10" title="Excellent!">5 stars</label>
+            <input type="radio" id="star4-10" name="rating10" value="4" /><label for="star4-10" title="Very good">4 stars</label>
+            <input type="radio" id="star3-10" name="rating10" value="3" /><label for="star3-10" title="Good">3 stars</label>
+            <input type="radio" id="star2-10" name="rating10" value="2" /><label for="star2-10" title="Poor">2 stars</label>
+            <input type="radio" id="star1-10" name="rating10" value="1" /><label for="star1-10" title="Very Poor">1 star</label>
+        </fieldset>
+        <div class="clearfix"></div>
+
+    </p>
+
+    <p><b><label for="rating11">11. {% trans "Your contribution/role in the Waste Management Program " %}</label></b>
+    <div>
+    <select name="rating11">
+		<option value="Worker">Worker</option>
+		<option value="Passerby">Passerby</option>
+		<option value="Homeowner" selected>Homeowner</option>
+		<option value="Other">Other</option>
+	</select>
+</div>
+    
+<hr>
+    <!-- <h3>Please Answer</h3><br>
+    <table>
+        <tr><th><b>1) Do you have separate bins for the following </b></th></tr>
+        <tr><td><b>(A) Food  </b></td><td><input type="radio" name="yes_no" value ="yes">Yes</input><input type="radio" name="yes_no" value="no" >No</input></td></tr>
+        <tr><td><b>(B) Recyclable paper/plastic  </b></td><td><input type="radio" name="yes_no1" value ="yes" >Yes</input><input type="radio" value="no" name="yes_no1" >No</input></td></tr>
+        <tr><td><b>(C) e-waste  </b></td><td><input type="radio" name="yes_no2" value ="yes">Yes</input><input type="radio" name="yes_no2"value="no" >No</input></td></tr>
+        <tr><td><b>(D) pads( menstrual, sanitation)  </b></td><td><input type="radio" name="yes_no3" value ="yes" >Yes</input><input type="radio" name="yes_no3" value="no">No</input></td></tr>
+        <tr><td><b>(E) epr ( packaging from amazone etc)  </b></td><td><input type="radio" name="yes_no4" value ="yes" >Yes</input><input type="radio" name="yes_no4"value ="no" >No</input></td></tr></table> -->
+        <!-- <p><b>2) Will you keep those if you don't have and you get them free. Which</b><br>
+            (A) Food &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img style ="width:30px;"src ="../static/images/radio_ch.png">YES <img style ="width:40px;"src ="../static/images/radio.jpg">No</p>
+            (B) Recyclable paper/plastic &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img style ="width:40px;"src ="../static/images/radio.jpg">YES <img style ="width:30px;"src ="../static/images/radio_ch.png">No</p>
+            (C) e-waste &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img style ="width:40px;"src ="../static/images/radio.jpg">YES <img style ="width:30px;"src ="../static/images/radio_ch.png">No</p>
+            (D) pads( menstrual, sanitation) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<img style ="width:40px;"src ="../static/images/radio.jpg">YES <img style ="width:30px;"src ="../static/images/radio_ch.png">No</p>
+            (E) epr ( packaging from amazone etc) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img style ="width:40px;"src ="../static/images/radio.jpg">YES <img style ="width:30px;"src ="../static/images/radio_ch.png">No</p>
+            <br>
+            <p><b>3) Do you need second round of collection of waste ? If yes when?</b><br>
+                a)<img style ="width:40px;"src ="../static/images/radio.jpg">12 noon  b)<img style ="width:30px;"src ="../static/images/radio_ch.png"> 5 pm   c)<img style ="width:40px;"src ="../static/images/radio.jpg"> 8 pm
+            <br>
+            <p><b>4) Do you want waste collection on call ( phone/whatsapp) ?
+                If yes for what?</b></p>
+                a)<img style ="width:40px;"src ="../static/images/radio.jpg">non-veg waste   b)<img style ="width:30px;"src ="../static/images/radio_ch.png">hair   c)<img style ="width:40px;"src ="../static/images/radio.jpg"> big packaging d)<img style ="width:40px;"src ="../static/images/radio.jpg">recyclable plastic
+                <br><br>
+                <p><b>5) Do you wish to utilize compost for growing kitchen garden/microgreens? If yes how much ( in kg) per month ? _____________</b></p>
+                <br>
+                <p><b>6) Do you want some handholding for segregation</b>&nbsp;&nbsp;<img style ="width:30px;"src ="../static/images/radio_ch.png">YES <img style ="width:40px;"src ="../static/images/radio.jpg">No</p></p>
+                <p><b>7) Do you want some handholding for kitchen garden</b>&nbsp;&nbsp;<img style ="width:30px;"src ="../static/images/radio_ch.png">YES <img style ="width:40px;"src ="../static/images/radio.jpg">No</p></p>
+                <br><br>
+                <p><b></b></p>
+    <p><b></b></p>
+    <p><b></b></p>
+    <p><b></b></p> -->
+    <div class="clearfix"></div>
+    <button class="submit clearfix">{% trans "Submit" %}</button></form>
+</div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+
+    {% endfor %}
+</ul>
+{% endif %} 
+
+{% endblock %}
+{% block extra_javascript %}
+<script>
+$(document).ready(function() {
+    $("form#ratingForm").submit(function(e) 
+    {   
+        // alert("I am clicked")
+        e.preventDefault(); // prevent the default click action from being performed
+        if ($("#ratingForm :radio:checked").length == 0) {
+            $('#status').html("nothing checked");
+            return false;
+        } else {
+            $('#status').html( 'You picked ' + $('input:radio[name=rating1]:checked').val() );
+            $('#status2').html( 'You picked ' + $('input:radio[name=rating2]:checked').val() );
+            $('#status3').html( 'You picked ' + $('input:radio[name=rating3]:checked').val() );
+            $('#status4').html( 'You picked ' + $('input:radio[name=rating4]:checked').val() );
+            $('#status5').html( 'You picked ' + $('input:radio[name=rating5]:checked').val() );
+        }
+
+    // $("form#ratingForm").submit(function(e) 
+    // {
+        // e.preventDefault(); // prevent the default click action from being performed
+        // if ($("#ratingForm :radio:checked").length == 0) {
+        //     $('#status').html("nothing checked");
+        //     return false;
+        // } else {
+        //     $('#status').html( 'You picked ' + $('input:radio[name=rating]:checked').val() );
+        // }
+    // });
+    // $("form#ratingForm2").submit(function(e) 
+    // {
+    //     e.preventDefault(); // prevent the default click action from being performed
+    //     if ($("#ratingForm2 :radio:checked").length == 0) {
+    //         $('#status2').html("nothing checked");
+    //         return false;
+    //     } else {
+    //         $('#status2').html( 'You picked ' + $('input:radio[name=rating2]:checked').val() );
+    //     }
+    // });
+    });
+});
+</script>
+{% endblock %}

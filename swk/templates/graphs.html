@@ -1,0 +1,22 @@
+{% extends 'new.html' %} 
+{% load i18n %}
+{% block content %}{% block extra_css %}
+
+
+{% endblock %}
+{% autoescape off %}
+{{ plot_div }}
+{% endautoescape %}
+<hr>
+<hr>
+
+{% autoescape off %}
+{{ plot_div1 }}
+{% endautoescape %}
+<hr>
+
+{% autoescape off %}
+{{ plot_div2 }}
+{% endautoescape %}
+
+{% endblock %}

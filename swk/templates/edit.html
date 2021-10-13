@@ -1,0 +1,106 @@
+{% extends 'new.html' %} {% load static%} {% block content %}
+{% load i18n %}
+
+<div class="container mb-5 text-center">
+
+    <form method="POST" class="post-form" action="/update/{{data.track_id}}" style="margin-top: 80px;">
+        {% csrf_token %}
+
+
+        <div>
+            <label class="col-sm-1 col-form-label"></label>
+            <div>
+                <h3>{% trans "Update Details" %}</h3>
+            </div>
+        </div>
+        <div>
+            <label> {% trans "Track ID" %}:</label>
+            <div>
+                <input type="text" name="id" id="id_track_id" required value="{{ data.track_id }}" disabled =True />
+            </div>
+        </div>
+        <div>
+            <label> {% trans "Houses Reached:" %}</label>
+            <div>
+                <input type="text" name="num_houses_reached" id="id_num_houses_reached" required value="{{ data.num_houses_reached }}" />
+            </div>
+        </div>
+        <div>
+            <label> {% trans "Houses Doing Seggregation:" %}</label>
+            <div>
+                <input type="text" name="num_houses_doing_segg" id="id_num_houses_doing_segg" required value="{{ data.num_houses_doing_segg }}" />
+            </div>
+        </div>
+        <div>
+            <label> {% trans "Houses Giving Mixed Wasted:" %}</label>
+            <div>
+                <input type="text" name="num_houses_giving_mixwaste" id="id_num_houses_giving_mixwaste" required value="{{ data.num_houses_giving_mixwaste }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Dry Waste BF:" %}</label>
+            <div>
+                <input type="text" name="drywaste_bf" id="id_drywaste_bf" required value="{{ data.drywaste_bf }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Dry Waste AF:" %}</label>
+            <div>
+                <input type="text" name="drywaste_af" id="id_drywaste_af" required value="{{ data.drywaste_af }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Wet Waste BF:" %}</label>
+            <div>
+                <input type="text" name="wetwaste_bf" id="id_wetwaste_bf" required value="{{ data.wetwaste_bf }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Wet Waste AF:" %}</label>
+            <div>
+                <input type="text" name="wetwaste_af" id="id_wetwaste_af" required value="{{ data.wetwaste_af }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Zone Name:" %}</label>
+            <div>
+                <input type="text" name="lane_name" id="id_lane_name" required value="{{ data.lane_name }}" />
+            </div>
+        </div>
+        
+        <div>
+            <label>{% trans "Date:" %}</label>
+            <div>
+                <input type="text" name="date" id="id_date" required value="{{ data.date|date:'Y-m-d' }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Supervisor Name:" %}</label>
+            <div>
+                <input type="text" name="supervisor_name" id="id_supervisor_name" required value="{{ data.supervisor_name }}" />
+            </div>
+        </div>
+        <div>
+            <label>{% trans "Rejected:" %}</label>
+            <div>
+                <input type="text" name="rejected" id="id_rejected" required value="{{ data.rejected }}" />
+            </div>
+        </div>
+        <div style="display:none;">
+            <label>{% trans "Zone ID:" %}</label>
+            <div>
+                <input type="text" name="zone_id_id" id="id_zone_id_id" required value="{{ data.zone_id_id }}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label"></label>
+            <div class="col-sm-4">
+                <button type="submit" class="btn btn-success">{% trans "Update" %}</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    // console.log("{{ data.zone_id_id }}")
+</script>
+{% endblock %}

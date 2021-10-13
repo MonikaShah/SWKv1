@@ -1,0 +1,52 @@
+{% extends 'new.html' %} {% load crispy_forms_tags %} {% block content %} {% block extra_css %}
+{% load l10n %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+    /* .myform>* {
+        margin: 30px 0;
+    } */
+    
+    .form-row {
+        margin: 50px;
+    }
+    
+    .myform {
+        margin-top: 150px;
+    }
+</style>
+{% endblock %}
+<div class="container mb-7 text-center" style="margin-top: 100px;">
+    <h1 class='text-center mt-5'>Duty Entry Form</h1>
+
+    <form method="post" style="margin-left: 350px;">
+        {% csrf_token %}
+
+        <table>
+            {% localize on %} {{ form.as_table }} {% endlocalize %}</table> <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+<!-- <div class="container mb-2 text-center" style="margin-top: 100px;">
+    <h1 class='text-center mt-5'>Duty Entry Form </h1><br>
+
+    <form method="post" style="margin-left: 350px;">
+        {% csrf_token %}
+        <table>{{ form.as_table }}</table> <button type="submit " class="btn btn-primary ">Submit</button></div>
+
+
+</form>
+</div> -->
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    </div>
+
+    {% endfor %}
+</ul>
+{% endif %} {% endblock %}

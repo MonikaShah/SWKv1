@@ -1,0 +1,369 @@
+{% extends 'new.html' %}  {% load crispy_forms_tags %}
+{% load static%} {% block content %}{% block extra_css %}
+{% load i18n %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script> -->
+<!-- <script type="text/javascript" src="http://yourjavascript.com/7174319415/script.js"></script> -->
+<script type="text/javascript" src="{% static 'js/recorder.js' %}"></script>
+<script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script>
+  function GetSelectedTextValue(zones_selected) {
+        var str = zones_selected.options[zones_selected.selectedIndex].innerHTML;
+
+        // var grievance_id = str.substring(0, 3)   // Returns "ell"
+        var grievance_id =str.concat("_");
+        // var dt = new Date().getUTCMilliseconds();
+        var today = new Date();       
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;  
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var today = dd + '/' + mm + '/' + yyyy;
+
+        // var dt = day.concat("-").concat(month).concat("-").concat(year);
+
+        grievance_id = grievance_id.toUpperCase()+today;
+        console.log(grievance_id);
+
+         document.getElementById("id_grievance_no").value = grievance_id;
+    }
+window.onload = () => {
+$(document).ready(function() {
+
+
+    document.getElementById('audio_file').onchange = function () {
+      //alert('Selected file: ' + this.value);
+      var win_path = this.value;
+      win_path = win_path.replace(/^.*[\\\/]/, '');
+        console.log(win_path.replace(/^.*[\\\/]/, ''));
+
+         document.getElementById("audio_src").value = win_path;
+         document.getElementById("id_audio_src").value = win_path;
+
+    };
+     document.getElementById('img_file').onchange = function () {
+      //alert('Selected file: ' + this.value);
+      var win_path_img = this.value;
+      win_path_img = win_path_img.replace(/^.*[\\\/]/, '');
+        console.log(win_path_img.replace(/^.*[\\\/]/, ''));
+        // alert(win_path_img);
+
+         document.getElementById("id_img_src").value = win_path_img;
+
+    };
+
+$(document).on('change', 'select#selectlanes', function () {
+    document.getElementById("id_selectzones").value =  $('#selectzones').val();
+    document.getElementById("id_selectlanes").value =  $('#selectlanes').val();
+}),
+
+$(document).on('click', 'select#selectzones', function () {
+     var optionSelected = $(this).find("option:selected");
+     var valueSelected  = optionSelected.val();
+     var country_name   = [];
+     country_name.push(optionSelected.text());
+
+     $.ajax({
+            url: '/getdetails',
+            type: 'get', // This is the default though, you don't actually need to always mention it
+            data: {'name': country_name},
+            dataType: "json",
+            success: function(result) {
+
+            if(country_name == 'please select your zone')
+            {
+            $("#selectzones option").remove();
+            for (var i = result.length - 1; i >= 0; i--) {
+                if(result[i].name != country_name)
+                {
+                $("#selectzones").append('<option>'+ result[i].name +'</option>');
+                }
+                else
+                {
+                    $("#selectzones").append('<option selected>'+ result[i].name +'</option>');
+                }
+            }
+            }
+            else
+            {
+                $("#selectlanes option").remove();
+            for (var i = result.length - 1; i >= 0; i--) {
+                if(result[i].name != country_name)
+                {
+                $("#selectlanes").append('<option>'+ result[i].name +'</option>');
+                }
+                else
+                {
+                    $("#selectlanes").append('<option selected>'+ result[i].name +'</option>');
+                }
+                document.getElementById("id_selectzones").value =  $('#selectzones').val();
+                document.getElementById("id_selectlanes").value =  $('#selectlanes').val();
+            }
+            }
+            }, 
+    errors: function(e) {
+    alert(e);
+    }
+    });
+    });
+});
+}
+</script>
+<script defer class="containerScript">
+  var timeleft = 60;
+    document.addEventListener('DOMContentLoaded', function() {
+    var colors;
+     let recorder;
+        let context;
+        let audio = document.querySelector('audio');
+        let startBtn = document.querySelector('.js-start');
+        let stopBtn = document.querySelector('.js-stop');
+        //let codeBtn = document.querySelector('.js-code');
+        let pre = document.querySelector('pre');
+        window.URL = window.URL || window.webkitURL;
+        /** 
+         * Detecte the correct AudioContext for the browser 
+         * */
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+        let onFail = function(e) {
+            alert('Error '+e);
+            console.log('Rejected!', e);
+        };
+
+        let onSuccess = function(s) {
+            console.log('Recording...');
+            let tracks = s.getTracks();
+            startBtn.setAttribute('disabled', true);
+            stopBtn.removeAttribute('disabled');
+            context = new AudioContext();
+            let mediaStreamSource = context.createMediaStreamSource(s);
+            recorder = new Recorder(mediaStreamSource);
+            recorder.record();
+            stopBtn.addEventListener('click', ()=>{
+                console.log('Stop Recording...');
+                stopBtn.setAttribute('disabled', true);
+                startBtn.removeAttribute('disabled');
+                recorder.stop();
+                document.getElementById("btnstop").onclick = doFunction;
+                timeleft = 1;
+                document.getElementById("countdown").innerHTML = "";
+                tracks.forEach(track => track.stop());
+                recorder.exportWAV(function(s) {
+                    audio.src = window.URL.createObjectURL(s);
+                });
+                console.log('audio.src'+audio.src);
+              // document.getElementById("audio_src").value = audio_src;
+            });
+        }
+
+        startBtn.addEventListener('click', ()=>{
+            console.log('Recording stated...');
+            if (navigator.getUserMedia) {
+                /** 
+                 * ask permission of the user for use microphone or camera  
+                 */
+                navigator.getUserMedia({audio: true}, onSuccess, onFail);                                                                           
+            } else {
+                console.warn('navigator.getUserMedia not present');
+            }
+        });
+        
+        /*codeBtn.addEventListener('click', () => {
+            pre.classList.toggle('hide');
+            pre.innerHTML = document.querySelector('.containerScript').innerHTML;
+        });*/
+         document.getElementById("btnrecorded").onclick = doFunction;
+         function doFunction(){
+             console.log('do Function...');
+             var x = document.getElementById("btnaudio").src;
+             console.log(x);
+            // document.getElementById("audio_src").value = x;
+            // document.getElementById("id_audio_src").value = x;
+                var a = document.createElement("a");
+                document.body.appendChild(a);
+                //a.style = "display: none";
+                a.href = x;
+let date_ob = new Date();
+
+// adjust 0 before single digit date
+let date = ("0" + date_ob.getDate()).slice(-2);
+
+// current month
+let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+// current year
+let year = date_ob.getFullYear();
+
+// current hours
+let hours = date_ob.getHours();
+
+// current minutes
+let minutes = date_ob.getMinutes();
+
+// current seconds
+let seconds = date_ob.getSeconds();
+
+// prints date & time in YYYY-MM-DD HH:MM:SS format
+            var date_format_str = year + "-" + month + "-" + date + "_" + hours + "-" + minutes + "-" + seconds;
+                a.download = date_format_str+"_recording.wav";
+                a.click();
+             }
+
+        //////
+        document.getElementById("gameStart").addEventListener("click", function(){
+            var downloadTimer = setInterval(function function1(){
+            document.getElementById("countdown").innerHTML = timeleft +
+            "&nbsp"+"seconds remaining";
+
+            timeleft -= 1;
+            if(timeleft <= 0){
+                clearInterval(downloadTimer);
+                document.getElementById("countdown").innerHTML = ""
+                var link = document.getElementById('btnstop');
+                link.click();
+            }
+            }, 1000);
+            console.log(countdown);
+        });
+
+        ////////////
+    });
+
+
+    </script>
+
+    <script type="text/javascript">
+    function confSubmit() {
+           var grev = document.getElementById("id_grievance").value ;
+           var audio_file = document.getElementById("audio_file").files.length > 0;
+           var img_file = document.getElementById("img_file").files.length > 0;
+
+               if(grev == '' && audio_file == false && img_file == false){
+                    alert('Please enter any one of three fields(Grievance / upload recording / upload image.');
+                    return false;
+               }else{
+                    return true;
+               }
+        }
+    </script>
+<style>
+select {
+    width : 300px;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-padding-end: 20px;
+    -moz-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -moz-padding-start: 2px;
+    /* background-color: #a0f3bcd0; Fallback color if gradients are not supported */
+    
+    background-position: center right;
+    background-repeat: no-repeat;
+    border: 1px solid rgb(170, 170, 170);
+    border-radius: 2px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    color: #555;
+    font-size: inherit;
+    margin: 0;
+    overflow: hidden;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+    .form-row {
+        margin: 50px;
+    }
+    
+    table {
+        padding: 10px;
+    }
+    
+    #feedback_div{
+        display: none;
+        display: block;
+    }
+    .btn-secondary{
+        background-color:black;
+    }
+</style>
+{% endblock %}
+
+
+<body>
+
+<div class="container mb-7" style="margin-top: 10px;">
+    <h2>{% trans "Audio Grievance Form "%}</h2><hr><br>
+
+    <!-- <h1 class='text-center mt-5'>Feedback / Complaint Form</h1> -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- <ul class="errorlist"><li>done<ul class="errorlist"><li>This field is required.</li></ul></li></ul> -->
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+    
+    <form method="post" data-url="{{ request.build_absolute_uri|safe }}" class="form-group" style="text-align:left;" enctype="multipart/form-data" onsubmit="return confSubmit();" >
+
+        <!-- {{ form.media }} -->
+        {% csrf_token %}
+
+        <select name="selectzones" id="selectzones" onchange="GetSelectedTextValue(this)">
+
+            <option value="select">please select your zone</option>
+
+          </select>  
+            <select name ="selectlanes" id="selectlanes">
+                <option value="select">please select address lane</option>
+
+            </select>
+
+             <input type="hidden" id="audio_src" value=""  name="audio_src" />
+             <input type="hidden" id="img_src" value=""  name="img_src" />
+             <input type="hidden" id="grievance_no" value=""  name="grievance_no" />
+       
+        <div class="container mb-7" style="margin-top: 10px;" id = "feedback_div">
+            <table table style="margin-right: 10px";>{{ form.as_table}}</table> <br>
+            <b>Record Audio:</b>
+            <audio controls autoplay id="btnaudio" ></audio>
+
+            <button type="button" class="btn btn-secondary waves-effect waves-light js-start" style="align-items: center;"  id="gameStart">Start </button>
+
+            <button type="button" class="btn btn-secondary waves-effect waves-light js-stop" id="btnstop" disabled>Stop </button>
+            <button type="button" class="btn btn-secondary" id="btnrecorded"  >Save  </button> <div id= "countdown"></div>
+            <b>Upload Recording to sent on Mail: </b><input type="file"  accept="audio/*" name="myfile" id="audio_file"/>
+            <br/><br/>
+            <b>Upload Image: </b>  <input type="file" name="upload" accept="image/*" id="img_file">
+            <br/><br/>
+
+            <b>Note : </b>Record Audio by using Start & Stop Button, Save Button will save the audio to the disk
+            <br><br>
+            <button type="submit" style="align-items: center;" class="btn btn-primary">Send Mail</button><br>
+        </div>
+    </form>
+</div><br>
+ {% endblock %}
+
+</body>

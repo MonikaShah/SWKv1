@@ -1,0 +1,1143 @@
+{% extends 'map/map_base.html' %}
+{% load static%}
+{% block extra_map_css %}
+{% load i18n %}
+<!-- import psycopg2 -->
+<style>
+
+    
+.border {
+    padding: 6px 8px;
+    border-style: groove;
+    border-radius: 5px;
+    margin:20px;
+}
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+/* .table{
+  border-collapse: collapse;
+  padding: 50px;
+  font-weight: bold;
+
+  
+  /* background:rgba(191, 149, 233, 0.473); */
+
+/* } */ */
+table, th, td 
+    {
+        border-bottom: 1px solid #ddd;
+        border-collapse: collapse;
+        padding: 2px 3px;
+        text-align: center;
+    }
+    th {
+        font-weight:bold;
+    }
+
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+   
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+.legendwet {
+    line-height: 18px;
+    color: #555;
+}
+.legendwet i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+/* css to customize Leaflet default styles  */
+.leaflet-popup-content-wrapper {
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+}
+
+.leaflet-popup-content{
+    font-weight: bold;
+}
+/* css for table tbinfo*/
+#tbinfo {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  font-weight: bolder;
+}
+
+#tbinfo td, #tbinfo th {
+  border: 3px solid #ddd;
+  padding: 8px;
+}
+
+#tbinfo tr:nth-child(even){background-color: #f2f2f2;}
+
+#tbinfo tr:hover {background-color: rgb(194, 92, 92);}
+
+#tbinfo th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+#checkboxes {
+  display: none;
+  /* border: 1px #dadada solid; */
+}
+
+#datepick {
+  display: none;
+  /* border: 1px #dadada solid; */
+}
+
+#checkboxes label {
+  display: block;
+  text-decoration-color: blue;
+  text-align: left;
+  margin: 10px;
+}
+
+#checkboxes2 {
+  display: none;
+  /* border: 1px #dadada solid; */
+}
+
+#checkboxes2 label {
+  display: block;
+  text-decoration-color: blue;
+  text-align: left;
+  margin: 10px;
+}
+
+#checkboxes3 {
+  display: none;
+  /* border: 1px #dadada solid; */
+}
+
+#checkboxes3 label {
+  display: block;
+  background-color:white;
+  text-decoration-color: blue;
+  text-align: left;
+  margin: 10px;
+}
+#checkboxes7 {
+        display: none;
+        /* border: 1px #dadada solid; */
+}
+    
+#checkboxes7 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+}
+
+#checkboxes2 {
+        display: none;
+        /* border: 1px #dadada solid; */
+}
+    
+#checkboxes2 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+}
+
+#checkboxes5 {
+        display: none;
+        /* border: 1px #dadada solid; */
+    }
+    
+#checkboxes5 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+}
+#checkboxes4 {
+        display: none;
+        /* border: 1px #dadada solid; */
+}
+#checkboxeszone {
+        display: none;
+        /* border: 1px #dadada solid; */
+}
+#checkboxeszone label{
+    display: block;
+    text-align: left;
+    margin: 10px;
+}
+
+
+#radiobutt {
+    display:none;
+}
+#radiobutt label{
+    display: block;
+    text-align: left;
+    margin: 20px;
+}
+    
+#checkboxes4 label {
+        display: block;
+        text-align: left;
+        margin: 10px;
+}
+
+
+/* Popup container - can be anything you want */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  left: 50%;
+  margin-right: -5px;
+  border-width: 5px;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;} 
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+.form-control {
+  width: 160px;
+}
+
+.circle {
+        /* background-color: red; */
+        border-radius: 50%;
+    }
+</style>
+
+{% endblock extra_map_css%}
+
+{% block map_content%}
+  <!-- {% block sidebar %}
+  {% endblock %} -->
+
+  
+  
+    <div id="side-bar" style="background-color:  rgba(255, 255, 255);">                <!-- side-bar container -->
+        <div class="mobileShow">
+
+            <div style="text-align: center">
+                <button style="display: inline-block ;position: relative; background: #000; opacity: 0.60;" id="closebutton" name="closebutton" class="btn btn-secondary"><span class="fa fa-bars"></span></button>
+            </div>
+    
+        </div>
+      <div>
+        <div class="text-center border">
+
+
+            <form id="projectList" style="width: 100%">
+
+                <form>
+                    <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes3()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> {% trans "Geographical Hierarchy" %}</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes3">
+                            <div class="checkbox" id="boundary">
+                                <label><input type="checkbox" value="{admin}" onchange="getBoundaryru(this)"><span> {% trans "AdminWard Boundary" %}</span></label>
+                            </div>
+                            <!-- <div class="checkbox">
+                                <label><input type="checkbox" value="{lanes}" onchange="getBoundaryru(this)"><span> {% trans "Worli Koliwada Lanes" %}</span></label>
+                            </div> -->
+                            <div class="checkbox">
+                              <label><input type="checkbox" value="{corbound}" onchange="getBoundaryru(this)"><span> {% trans "Corporator Ward Boundary" %}</span></label>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    
+                    <br>
+                      
+                    <div class="multiselect">
+                      <div class="selectBox" onclick="showCheckboxes7()">
+                          <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> {% trans "Zonal Geometry" %}</button>
+                          <div class="overSelect"></div>
+                      </div>
+                      <div id="checkboxes7">
+                          <!-- <div class="checkbox" id="boundary">
+                              <label><input type="checkbox" value="{lane}" onchange="getBoundaryru(this)"><span> Lane(coming up soon...)</span></label>
+                          </div> -->
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{binpath}" id ="binpath" onchange="getBoundaryru(this)"><span> {% trans "Lanes / Bin Paths " %}</span></label>
+                         </div>
+                          <div class="checkbox">
+                            <label><input type="checkbox" value="{spots}" id ="spots"onchange="getBoundaryru(this)"><span> {% trans "Spots " %}</span></label>
+                         </div>
+                          <!-- <div class="checkbox">
+                              <label><input type="checkbox" value="{spot}" onchange="getBoundaryru(this)"><span> {% trans "Spot Images" %}</span></label>
+                          </div> -->
+                          <div class="checkbox">
+                              <label><input type="checkbox" value="{bubble}" id ="bubble" onchange="getBoundaryru(this)"><span> {% trans "Bubble" %}</span></label>
+                          </div>
+                          <div class="checkbox">
+                              <label><input type="checkbox" value="{zones}" id ="zone" onchange="getBoundaryru(this)"><span> {% trans "Zones" %}</span></label>
+                          </div>                       
+                      
+                      </div>
+                      <br>
+                      <div class="multiselect">
+                        <div class="selectBox" onclick="showCheckboxes2()">
+                            <button type="button" class="btn btn-outline-dark" style="width: 90%;font-size:12px; "> {% trans "Landmarks" %}</button>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes2">
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="{grounds}" id ="grounds" onchange="getBoundaryru(this)"><span> {% trans "Grounds" %}(7)</span></label>
+                         </div>
+                          <div class="checkbox">
+                            <label><input type="checkbox" value="{toilets}" id ="toilets"onchange="getBoundaryru(this)"><span> {% trans "Public-Toilets" %}(7)</span></label>
+                         </div>
+                         <div class="checkbox">
+                            <label><input type="checkbox" value="{compost}" id ="compost"onchange="getBoundaryru(this)"><span> {% trans "Compost Pits " %}(13)</span></label>
+                         </div>
+                         <div class="checkbox">
+                            <label><input type="checkbox" value="{openplace}" id ="openplace" onchange="getBoundaryru(this)"><span> {% trans "Open Places " %}(4)</span></label>
+                         </div>
+                         <div class="checkbox">
+                            <label><input type="checkbox" value="{temples}" id ="temples"onchange="getBoundaryru(this)"><span> {% trans "Temples/Worship places " %}(24)</span></label>
+                         </div>
+                         <div class="checkbox">
+                            <label><input type="checkbox" value="{schools}" id ="schools"onchange="" disabled><span> {% trans "Schools" %}(0)</span></label>
+                         </div>
+                         </div>
+                         <br>
+                      <button type="button" class="btn btn-primary" id='locate'>{% trans "Your Location" %}</button>
+                    </div>
+                   
+                </div> 
+                      
+            </form>
+
+        
+</form>
+{% endblock map_content%}
+{% block extra_map_javascript%}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+// *****************
+        let $locate = $('#locate');
+        let $body = $('body');
+        let currentPos = null;
+        let marker = null;
+        let oldMarker = null;
+        let oldLayer = null;
+
+        // YOUR LOCATION BUTTON
+        $locate.on('click', function(e) {
+            if (oldMarker) {
+                mymap.removeLayer(oldMarker);
+                oldMarker = null;
+            }
+            if (oldLayer) {
+                mymap.removeLayer(oldLayer);
+                oldLayer = null;
+                facilityLayer = new L.featureGroup();
+            }
+            // $status.html('finding your location');
+            if (!navigator.geolocation) {
+                alert("<p>Sorry, your browser does not support Geolocation</p>");
+                return;
+            }
+            $body.removeClass('loaded');
+            navigator.geolocation.getCurrentPosition(success, error);
+        });
+
+         // IF LOCATION FETCH BY BROWSER SUCCESS
+         function success(position) {
+            $body.addClass('loaded');
+            currentPos = [position.coords.latitude, position.coords.longitude];
+            mymap.setView(currentPos, 13);
+            marker = L.marker(currentPos)
+                .addTo(mymap)
+                .bindTooltip("Your Location")
+                .openTooltip();
+            oldMarker = marker;
+
+        };
+        // IF error IN FETCHING LOCATION
+        function error() {
+            alert("Unable to retrieve your location");
+        };
+
+        const domain = ['https://geoserver2.communitygis.net/', 'http://localhost/'];
+            var rootUrl = domain[0] + 'geoserver/geonode/ows';
+
+            var defaultParameters = {
+                service: 'WFS',
+                version: '1.0.0',
+                request: 'GetFeature',
+                outputFormat: 'json'
+            };
+
+            var wms_legend;
+            var info = L.control();
+            var attribute_table = L.control({
+                position: 'bottomright'
+            });
+            var LayerList = [];
+            var tempParameter = defaultParameters;
+            var newLayerList = [];
+            var pointLayerList = [];
+
+            var myWorliLayerList = [];
+            var popup_layer, content;           
+            let  imageloca= [];
+           
+
+                       
+
+        // <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+            var expanded = false;
+
+            function showCheckboxes2() { //geographical heirarchy
+                var checkboxes = document.getElementById("checkboxes2");
+                if (!expanded) {
+                    checkboxes2.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes2.style.display = "none";
+                    expanded = false;
+                }
+            }
+            
+            function showCheckboxes3() { //geographical heirarchy
+                var checkboxes = document.getElementById("checkboxes3");
+                if (!expanded) {
+                    checkboxes3.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes3.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function showCheckboxes7() { //zonal geometry
+                var checkboxes = document.getElementById("checkboxes7");
+                
+                if (!expanded) {
+                    checkboxes7.style.display = "block";
+                    expanded = true;
+                } else {
+
+                    checkboxes7.style.display = "none";
+                    expanded = false;
+                }
+            }
+
+            function getBoundaryru(obj) {
+                let boundary = obj.value;
+                console.log(boundary)
+                if ($(obj).is(":checked")) {
+                    if (boundary == "{admin}")
+                        putWMSru("geonode:worli_pincodes_30_25_18");
+                    else if (boundary == "{lanes}")
+                        putWMSru("geonode:worli_hand_drawn_update_26oct");
+                    else if (boundary == "{corbound}")
+                        putWMSru("geonode:ward_193_updated_3nov");
+                    else if (boundary == "{binpath}")    
+                        putWMSru("worli-koliwada:worli_binpath_28june21"); 
+                    else if (boundary == "{zones}")    
+                        putWMSru("worli-koliwada:worli_zones_28june21");   
+                    else if (boundary == "{bubble}")    
+                        // putWMSru("geonode:worli_bubble_updated_15march"); 
+                        putWMSru("worli-koliwada:worli_bubbles_28june21");  
+                    else if (boundary == "{spots}") 
+                        putWMSru("worli-koliwada:worli_spots_28june21"); 
+                        // displayPoints(tempParameter);
+                    else if (boundary == "{grounds}") 
+                        putWMSru("worli-koliwada:ground_20june21 ");
+                    else if (boundary == "{toilets}") 
+                        putWMSru("worli-koliwada:public_toilets_20june21 "); 
+                    else if (boundary == "{temples}") 
+                        putWMSru("worli-koliwada:temples_21june21"); 
+                    else if (boundary == "{openplace}") 
+                        putWMSru("worli-koliwada:worli_openplace_28june21"); 
+                    else if(boundary == "{compost}")
+                        putWMSru("worli-koliwada:worli_pits28june21");
+                                         
+
+                } else {
+//                    alert('in removeWM'+obj.value);
+                    if (boundary == "{admin}")
+                        removeWMS("geonode:worli_pincodes_30_25_18");
+                    else if (boundary == "{lanes}")                        
+                        removeWMS("geonode:worli_hand_drawn_update_26oct");
+                    else if (boundary == "{corbound}")                        
+                        removeWMS("geonode:ward_193_updated_3nov");
+                    else if (boundary == "{binpath}")                        
+                        removeWMS("worli-koliwada:worli_binpath_28june21");
+                    else if (boundary == "{zones}")                        
+                        removeWMS("worli-koliwada:worli_zones_28june21");
+                    else if (boundary == "{bubble}")    
+                        // removeWMS("geonode:worli_bubble_updated_15march");  
+                        removeWMS("worli-koliwada:worli_bubbles_28june21");  
+                    else if (boundary == "{spots}")    
+                        removeWMS("worli-koliwada:worli_spots_28june21");
+                    else if (boundary == "{grounds}")    
+                        removeWMS("worli-koliwada:ground_20june21 ");
+                    else if (boundary == "{toilets}")    
+                        removeWMS("worli-koliwada:public_toilets_20june21 ");
+                    else if (boundary == "{openplace}")    
+                        removeWMS("worli-koliwada:worli_openplace_28june21");
+                    else if(boundary == "{compost}")
+                        removeWMS("worli-koliwada:worli_pits28june21");
+                    else if(boundary == "{temples}")
+                        removeWMS("worli-koliwada:temples_21june21");
+                    
+                };
+
+
+            }
+            function putWMSru(layer) {
+               console.log(layer)
+               if (layer == "geonode:worli_pincodes_30_25_18") {
+                //alert("Reached ad map");
+                
+                   var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                       layers: layer,
+                       format: 'image/png',
+                       opacity:0.5,
+                    });
+                        wms_layer.addTo(mymap);
+                        mymap.setView([19.0066, 72.8100], 14);
+                        newLayerList.push(wms_layer);
+                } 
+               else if (layer == "geonode:worli_hand_drawn_update_26oct") {
+                   console.log(layer)
+                   var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                       layers: layer,
+                       format: 'image/png',
+                       transparent: 'true',
+                       maxZoom:20
+                     });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.0220, 72.8160], 17); 
+                    newLayerList.push(wms_layer);
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+               }
+               else if (layer == "geonode:ward_193_updated_3nov") {
+                   console.log(layer)
+                   var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                       layers: layer,
+                       format: 'image/png',
+                       transparent: 'true',
+                       maxZoom:20
+                   });
+
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.0220, 72.8110], 14);
+                    newLayerList.push(wms_layer);
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+               }
+               else if (layer == "worli-koliwada:worli_binpath_28june21") {
+                   console.log(layer)
+                   var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                       layers: layer,
+                       format: 'image/png',
+                       opacity: .7,
+                       maxZoom:20                       
+                    });
+                    wms_layer.addTo(mymap);
+                    
+                    mymap.setView([19.0170, 72.8137], 16);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    console.log("popupzone",popup_layer);
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    legend.addTo(mymap);
+               }
+               else if (layer == "worli-koliwada:worli_zones_28june21") {
+                   console.log(layer)
+                   var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                       layers: layer,
+                       format: 'image/png',
+                       opacity: .7,
+                       maxZoom:20
+                       
+                   });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.0175, 72.813], 16);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    console.log("popupzone",popup_layer);
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    legend.addTo(mymap);
+               }
+               
+               else if (layer == "worli-koliwada:worli_bubbles_28june21") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        opacity: .7,
+                        maxZoom:20,
+
+                    });
+                    wms_layer.addTo(mymap);
+                    mymap.setView([19.0207, 72.8159], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    console.log("popupzone",popup_layer);
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    legend1.addTo(mymap);
+                }
+                else if (layer == "worli-koliwada:worli_spots_28june21") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                    });
+                    wms_layer.addTo(mymap);
+
+
+                    mymap.setView([19.0200, 72.8160], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    legend.addTo(mymap);
+                    
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+                else if (layer == "worli-koliwada:ground_20june21 ") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                        
+                    });
+                    wms_layer.addTo(mymap);
+
+
+                    mymap.setView([19.0200, 72.8160], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    // legend.update();
+                    // legend.addTo(mymap);
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+            
+            else if (layer == "worli-koliwada:temples_21june21") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                    });
+                    wms_layer.addTo(mymap);
+
+
+                    mymap.setView([19.0200, 72.8160], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    // legend.addTo(mymap);
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+            
+            
+            else if (layer == "worli-koliwada:public_toilets_20june21 ") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                    });
+                    wms_layer.addTo(mymap);
+
+
+                    mymap.setView([19.0200, 72.8160], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    // legend.addTo(mymap);
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+            else if (layer == "worli-koliwada:worli_openplace_28june21") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                    });
+                    wms_layer.addTo(mymap);
+
+
+                    mymap.setView([19.0200, 72.8160], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/geonode/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    // legend.addTo(mymap);
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+            else if (layer == "worli-koliwada:worli_pits28june21") {
+                    console.log(layer)
+                    var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                        layers: layer,
+                        format: 'image/png',
+                        transparent: 'true',
+                        maxZoom:20
+                    });
+                    wms_layer.addTo(mymap);
+
+                    mymap.setView([19.0169, 72.823], 17);
+                    newLayerList.push(wms_layer);
+                    popup_layer="https://geoserver2.communitygis.net/geoserver/worli-koliwada/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=" + wms_layer.options.layers + "&QUERY_LAYERS=" + wms_layer.options.layers;  
+                    
+                    console.log(wms_layer);
+                    mymap.removeControl(legend);
+                    // legend.addTo(mymap);
+                    // addWMSLegend(wms_layer.options.layers);
+                }
+            
+            }
+            function removeWMS(unchecked_layer) {
+                newLayerList.forEach((layer, index) => {
+                if (layer.options.layers === unchecked_layer) {
+                    mymap.removeLayer(layer);
+                    newLayerList.splice(index, 1);
+                    mymap.removeControl(legend);
+                    mymap.removeControl(legend1);
+                }
+                });
+            }
+        // function for displaying spots
+
+            function onEachFeaturePoint(feature, layer) {
+                console.log(feature)
+                console.log(layer)
+                // does this feature have a property named popupContent?
+               
+                var str1 = "<img class = 'popupimage' src='../static/images/SPOT21.4.2021/".concat(feature.properties.Name);
+                                // var str1 = "<img class = 'popupimage' src='../static/images/GPS_Photos/prerana/".concat("Copy of GPSe-0.jpg");
+                                var str2 = str1.concat("' alt='image not found'>").concat(`<br><br>Date of Image:${feature.properties.Date}`).concat(`<br><br>Name of Image:${feature.properties.Name}`);
+                                // console.log(str2);
+                            
+                                layer.bindPopup(str2);
+            
+            }
+            // let landmarks = {}
+
+            // legend.update = function() {
+            //                         console.log("landmarks facility", landmarks)
+            //                         legendValues = {
+            //                             "Grounds": ['Grounds', '#f5ce42'],
+            //                             "PublicToilets": ['Public Toilets', '#0004ff'],
+            //                             "CompostPits": ['Compost Pits', '#a8325a'],
+            //                             "OpenPlaces": ['Open Places', '#143d5e'],
+            //                             "Temples": ['Temples/Workship Places', '#fa4646'],
+                                       
+            //                         }
+            //                         labels = ['<strong>Legends</strong>'];
+            //                         for (let fac in landmarks) {
+            //                             this._div.innerHTML +=
+            //                                 labels.push(
+            //                                     '<i class="circle" style="background:' + legendValues[fac][1] + ';opacity:1;">&nbsp;&nbsp;&nbsp;&nbsp;</i> ' +
+            //                                     legendValues[fac][0] + '<br>')
+
+
+            //                         }
+            //                         this._div.innerHTML = labels.join('<br>');
+            //                     }
+
+        function Identify(e) {
+
+            console.log("Identify",e);
+            // set parameters needed for GetFeatureInfo WMS request
+            var sw = mymap.options.crs.project(mymap.getBounds().getSouthWest());
+            var ne = mymap.options.crs.project(mymap.getBounds().getNorthEast());
+            var BBOX = sw.x + "," + sw.y + "," + ne.x + "," + ne.y;
+            var WIDTH = mymap.getSize().x;
+            var HEIGHT = mymap.getSize().y;
+
+            var X = Math.trunc(mymap.layerPointToContainerPoint(e.layerPoint).x);
+            var Y = Math.trunc(mymap.layerPointToContainerPoint(e.layerPoint).y);
+
+            // compose the URL for the request
+          
+
+            var URL = popup_layer + '&BBOX=' + BBOX + '&FEATURE_COUNT=1&HEIGHT=' + HEIGHT + '&WIDTH=' + WIDTH + '&INFO_FORMAT=application%2Fjson&TILED=false&CRS=EPSG%3A3857&I=' + X + '&J=' + Y;
+            // console.log(URL);
+            //send GetFeatureInfo as asynchronous HTTP request using jQuery $.ajax
+            $.ajax({
+                url: URL,
+                dataType: "json",
+                type: "GET",
+                success: function(data) {
+                    if (data.features.length !== 0) { // at least one feature returned in response
+                        var feature = data.features[0]; // first feature from response
+                        console.log(feature);
+                        // Set up popup for clicked feature and open it
+                        var popup = new L.Popup({
+                            maxWidth: 300
+                        });
+                        if (feature.properties.zono_numbe) {
+                            console.log("I reached at");
+                            
+                            if(feature.properties.zono_numbe == 1){
+                                lanes = "Akbar saikh chowl,"+"Muktabai chowl,"+"Laxman patel chowl,"+"Sulochna bane chowl,"+"John golbo chowl,"+"Atmaram sonar chowl,"+"	Dilima house,"+"Kutina house,"+"Rita john house,"+"Anthony kini house,"+"Mahendra niwas,"+"Rojibai agosti chowl,"+"Micle josef chowl,"+"Savitribai chowl,"+"Tigdi chowl,"+"Narayan niwas chowl,"+"Nitore chowl,"+"Vitthal worlikar chowl,"+"Naryan krupa chowl,"+"Guru krupa chowl,"+"Parvati bai niwas";
+
+                            }
+                            if(feature.properties.zono_numbe == 2){
+                                lanes = "Jayhind Krida Mandal,"+"Naveet Galli,"+"Buddist chaal,"+"Ganesa krida mandal,"+"Sanjay krida mandal,"+"Sarasvati band pataka,"+"Lakshmi narayan sadan,"+"Kalikhan chaal,"+"Hamuman galli,"+"Buddey house,"+"Tare Galli";
+
+                            }
+                            if(feature.properties.zono_numbe == 3){
+                                lanes = "Our Lady Of Velenkanni Cross,"+"Bhandarwada Ground,"+"Siddhivinayak Grhanirmana Sanstha ,"+"Waras Lane,"+"Love Star Krida Mandal,"+"Love Star Krida Mandal 2,"+"Amar Prem Chowk,"+"Amar Prem Krida mandal,"+"Ram singh chowl,"+"Mohan jayram chowl	Bhagirathi,"+"Daru pawar chowl,"+"Munsipal chaowl,"+"Gokhran chowl,"+"Ganpat shivra chowl,"+"ramdhani gupta niwas chowl,"+"Atmaram kharote chowl,"+"Bhagirathi niwas,"+"Chikane house";
+                            }
+                            if(feature.properties.zono_numbe == 4){
+                                lanes = "Milinda mitra mandal,"+"Datta kupa mandal,"+"Datta kupa mandal 2,"+"Baji Bala mitra mandal,"+"Sangama krida mandal,"+"Sambhaji mitra mandal,"+"Lucky matton shop";
+
+                            }
+                            if(feature.properties.zono_numbe == 5){
+                                lanes = "Jamat Hall	Datta Kridamandal,"+"Baji Balmandal	Amol classes,"+"Pakhari Galli,"+"Bajar Galli,"+"Vijay Mitra Mandal,"+"Chotu Bai Ganapat House,"+"Fish Market,"+"Aaradhna,"+"Yashwant Asharm,"+"Teen Batti Naka,"+"Bal Mitra Seva Mandal";
+
+                            }
+                            if(feature.properties.zono_numbe == 6){
+                                lanes = "Bhagat Galli,"+"Tare Galli,"+"Balchandra Nivas	Vrundavan,"+"Gonta Galli,"+"Jagruti Mandal,"+"Swarajya Mandal,"+"Manik Nakva House,"+"Pimpal Galli,"+"Lakshimi Jaganath Shruti Nivas,"+"Randhir Seva Mandal,"+"Mata Hirkani Nivas,"+"Jay Malhar House,"+"Aanad Classes,"+"Aaradhna Shankar Mandir";
+
+                            }
+                            if(feature.properties.zono_numbe == 7){
+                                lanes = "Dukkur Galli,"+"Dukkur Galli 2,"+"Tare House,"+"Isana John Koli,"+"Amar Meghnath Mandal,"+"Sadguru Bhavan,"+"Dyaneshwar Mandal,"+"Ekvira Nivas (Shriram Galli)	Shriram Galli,"+"Shriram Galli 2,"+"Shri Lakshimi Nivas,"+"Amar Sports Clube,"+"120 Kridamandal,"+"K House (Sonapur Lane),"+"Sonapur Lane,"+"Dyaneshwar Kridamandal Mandal,"+"Shriram Galli 3,"+"Matru Smruti Nivas,"+"Sonapur Lane 2,"+"Ekvira Nivas (Sonpur Lane),"+"Sai baba mandir";
+
+                            }
+                            if(feature.properties.zono_numbe == 8){
+                                lanes = "Walmiki Chowk,"+"Ganesha Temple,"+"Walmiki Chowk 2,"+"Pandharinath Niwas,"+"Janaki sadhan,"+"Balvir Galli,"+"Parvatibai,"+"Parashuram Niwas,"+"Balvir Galli 2,"+"Balvir Galli 3,"+"Walmiki Chowk 3,"+"Shankar Patil Niwas";
+
+                            }
+                            if(feature.properties.zono_numbe == 9){
+                                lanes = "Taak galli,"+"Dinesh store,"+"Taak galli 1,"+"Shree krishna mandir,"+"taak galli,"+"Taak galli 2,"+"Sri sai madir ,"+"Sai baba madir,"+"Siddhivinayak krida mandal,"+"Sri ram galli,"+"Astik brass band Pathak	Amar meghnath mandal,"+"Nautan bala mitra mandal";
+
+                            }
+                            if(feature.properties.zono_numbe == 10){
+                                lanes = "Kranti Kridamandal,"+"Lkshimi Sahwas,"+"Ashish Bhavan ,"+"Vikas Mitra Mandam,"+"Vijay Jayant Koli Nivas,"+"Vikas Galli,"+"Mahapooja Mandal,"+"Vikas Galli,"+"Dinesh Store,"+"Taak Galli,"+"Shree Ganesh Seva Mandal,"+"Navjivan Kridamandal,"+"Navjivan Wasahat,"+"Navjivan Wasahat 2,"+"Killa (Worli Koliwada),"+"K House (Killa),"+"	Sai Baba Mandir (Navjivan)";
+
+                            }
+                            if(feature.properties.zono_numbe == 11){
+                                lanes = "Sri Sai Prasad Sadan,"+"Nikam House,"+"Frank Mery Villa,"+"Worli Village Nagari vikasa Sanstha,"+"Damodara Seva Mandal,"+"Damodara Ground,"+"Dattatraya save Mandal,"+"Datta mandir ";
+
+                            }
+                            if(feature.properties.zono_numbe == 12){
+                                lanes = "Golfadevi Navratrotsava Mandal,"+"Golfadevi Navratrotsava Mandal 2	,"+"Dhananjaya krida mandal,"+"Jana seva mandal,"+"Sai baba mandir Ghumata mandal,"+"Golfadevi mandir,"+"Golfadevi Krida mandal";
+
+                            }
+                            if(feature.properties.zono_numbe == 13){
+                                lanes = "Ganpti Mandir,"+"Amol classes,"+"Prakash Arun Band Pathk,"+"Shilpa Hair Saloon Galli,"+"Dr Yadav Galli,"+"Mary Nivas,"+"Shree Sai Krupa Market,"+"Hanuman Nivas,"+"SAP Enterpriser ,"+"Sangam Kridamandal,"+"Sangam Kridamandal 2	,"+"Sangam Kridamandal 3";
+
+                            }
+                            
+                            content = "<table class = 'popupclass' ><tr colspan='5'><b>Zone Information</b></tr>" +
+                                "<tr><td><b>Name</b></td><td>" + feature.properties.zone_name + "</td></tr>" +
+                                "<tr><td><b>Number </b></td><td>" + feature.properties.zono_numbe+ "</td></tr>" + 
+                                "<tr><td><b>Lanes</b></td><td>" + lanes+ "</td></tr>" +"</table>";
+                        }
+                        if (feature.properties.layer) {
+                            console.log("I reached at");
+                            content = "<table class = 'popupclass' ><tr><td><b>BinPath Information</b></td><td></td></tr>" +
+                                "<tr><td><b>Zone Name</b></td><td>" + feature.properties.zone_name + "</td></tr>" +
+                                "<tr><td><b>Zone Id</b></td><td>" + feature.properties.zone_id+ "</td></tr>" + "</table>";
+                        } 
+                        if (feature.properties.bubble_nm) {
+                            console.log("I reached at");
+                            content = "<table class = 'popupclass' ><tr><td><b>Bubble Information</b></td><td></td></tr>" +
+                                "<tr><td><b>Bubble Id: </b></td><td>" + feature.properties.bubble_id + "</td></tr>" +
+                                "<tr><td><b>Bubble Name: </b></td><td>" + feature.properties.bubble_nm + "</td></tr>" +
+                                "<tr><td><b>Zone Name: </b></td><td>" + feature.properties.zone_name + "</td></tr>" +
+                                "<tr><td><b>Zone Number: </b></td><td>" + feature.properties.zone_id+ "</td></tr>" + "</table>";
+                        } 
+                        if (feature.properties.spot_id) {
+                            // console.log("I reached at");
+                        
+                            str1 = feature.properties.zone_id
+                            items = str1.split('_')
+                            spot_num = items[items.length - 1]
+                            fn = feature.properties.spot_name.trim()
+                            // console.log(items[items.length - 1]);
+                            // console.log(items);
+                            // console.log
+                            // filename = spot_num + '.' + feature.properties.spot_id +fn+'.jpg';
+                            filename = spot_num + '.' + feature.properties.spot_id +fn;
+                            console.log(filename)
+
+                            content = "<table border = 2 class = 'popupclass' ><tr colspan='4'><b>Spot Information</b></tr>"+
+                                "<tr><td colSpan='5'><b>Spot Number: </b></td><td>" + feature.properties.spot_id + "</td></tr>" +
+                                "<tr><td colSpan='5'><b>Spot Name: </b></td><td>" + feature.properties.spot_name + "</td></tr>" +
+                                "<tr><td colSpan='5'><b>Zone ID: </b></td><td>" + feature.properties.zone_id + "</td></tr>" +
+                                "<tr><td colSpan='5'><b>Zone Name: </b></td><td>" + feature.properties.zone_name+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/SPOT21.4.2021/".concat(filename)+"' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        } 
+                        
+                        if (feature.properties.Temple_nam) {
+                            // console.log("For Grounds(lanmark menu)
+                            str1 = feature.properties.Temple_nam
+                            items = str1.split('.')
+                            Temple_nam = items[items.length - 2]
+                            fn = feature.properties.Temple_nam.trim()
+                            console.log(items[items.length - 2 ]);
+                            console.log(items);
+                            // console.log
+                            filename = Temple_nam+'.jpg';
+                            console.log(filename)
+                          
+                            content = "<table border = 2 class = 'popupclass' ><tr colSpan='5'><b>Worship Place Information</b></tr>"+
+                                
+                                "<tr><td colSpan='5'><b>Name:</b></td><td>" +Temple_nam+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/Temple/".concat(filename)+"' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        } 
+                        if (feature.properties.Name) {
+                            // console.log("For Grounds(lanmark menu)
+                            str1 = feature.properties.Name
+                            items = str1.split('.')
+                            ground_name = items[items.length - 2]
+                            fn = feature.properties.Name.trim()
+                            console.log(items[items.length - 2 ]);
+                            console.log(items);
+                            // console.log
+                            filename = ground_name+'.jpg';
+                            console.log(filename)
+                          
+                            content = "<table border = 2 class = 'popupclass' ><tr colSpan='5'><b>Ground Information</b></tr>"+
+                                
+                                "<tr><td colSpan='5'><b>Name:</b></td><td>" +ground_name+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/Ground/".concat(filename)+"' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        }
+                        if (feature.properties.Toilet_Nam) {
+                            console.log("For Toilets(lanmark menu)")
+                            str1 = feature.properties.Toilet_Nam
+                            items = str1.split('.')
+                            Toilet_Nam = items[items.length - 2]
+                            fn = feature.properties.Toilet_Nam.trim()
+                            console.log(items[items.length - 2 ]);
+                            console.log(items);
+                            // console.log
+                            filename = Toilet_Nam+'.jpg';
+                            console.log(filename)
+                          
+                            content = "<table border = 2 class = 'popupclass' ><tr colSpan='5'><b>Toilet Information</b></tr>"+
+                                
+                                "<tr><td colSpan='5'><b>Name:</b></td><td>" +Toilet_Nam+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/Toilets/".concat(filename)+"' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        } 
+                        if (feature.properties.Name) {
+                            console.log("For OpenPlace(lanmark menu)")
+                            // alert("In openplace")
+                            str1 = feature.properties.OpenPlace
+                            items = str1.split('.')
+                            OpenPlace = items[items.length - 2]
+                            fn = feature.properties.OpenPlace.trim()
+                            console.log(items[items.length - 2 ]);
+                            console.log(items);
+                            // console.log
+                            filename = OpenPlace+'.jpg';
+                            console.log(filename)
+                          
+                            content = "<table border = 2 class = 'popupclass' ><tr colSpan='5'><b>Workship Places Information</b></tr>"+
+                                
+                                "<tr><td colSpan='5'><b>Name:</b></td><td>" +OpenPlace+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/Open Spaces/".concat(filename)+"' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        } 
+                        if (feature.properties.Pits_Name) {
+                            console.log("For Pits_Name(lanmark menu)")
+                            str1 = feature.properties.Pits_Name
+                            items = str1.split('.')
+                            Pits_Name = items[items.length - 2]
+                            fn = feature.properties.Pits_Name.trim()
+                            console.log(items[items.length - 2 ]);
+                            console.log(items);
+                            // console.log
+                            filename = Pits_Name+'.jpg';
+                            console.log(filename)
+                          
+                            content = "<table border = 2 class = 'popupclass' ><tr colSpan='5'><b>Pit Information</b></tr>"+
+                                
+                                "<tr><td colSpan='5'><b>Name:</b></td><td>" +Pits_Name+ "</td></tr>" +
+                                "<tr><td colSpan='5 '><b>Image: </b></td><td><img class = 'popupimage' src='../static/images/Pits/kandevadi composting.jpg' alt='image not found - '>"+filename+"</a></td></tr>" + "</table>";
+                        }
+
+                        popup.setContent(content);
+                            popup.setLatLng(e.latlng);
+                            mymap.openPopup(popup);
+                        }
+                    }
+                });
+            }
+
+            mymap.addEventListener('click', Identify);
+
+
+            //Legends for bin path, spots, bubbles and zone
+
+            var legend = L.control({position: 'bottomright'});
+
+            legend.onAdd = function (mymap) {
+                if(document.getElementById('binpath').checked) {
+                         var selection=  "binpath";
+                }
+                var div = L.DomUtil.create('div', 'info legend'),
+                    grades = [1,2,3,4,5,6,7,8,9,10,11,12,13],
+                    labels = ['HiraSeth Chawl to Waras Lane','Navneet Lane to Tare Galli','BhandarVada to Amar Prem Chowk','Pakhari Galli','Shankar Mandir to Bhagat Galli','Gonta Galli to Kranti Galli','Kranti Galli to Navjeevan Wasahat','Bazar Galli to Fish Market','Maval Maratha (Payari)','Sonapur to Dukkar Galli','Dukkar Galli to Taak Galli', 'Nagobacha Ghumat to Achanak','GolfaDevi'];
+
+                // loop through our density intervals and generate a label with a colored square for each interval
+                div.innerHTML += "<h4>Legend</h4><hr>";
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<i class="circle" style="background:' + getColor(grades[i]) + ';opacity:1;"></i>Zone ' +
+                       grades[i] + ':' + (labels[i]) + '<br>';
+                }
+                
+                
+                function getColor(d) {
+                    return d ==1 ? '#f373ed' :
+                           d ==2 ? '#1ee221' :
+                           d ==3  ? '#8978db' :
+                           d ==4  ? '#cab371' :
+                           d ==5  ? '#27e0cb':
+                           d == 6 ? '#d35018':
+                           d == 7 ? '#c9626e':
+                           d == 8 ? '#b7d811':
+                           d == 9 ? '#b97ae3':
+                           d == 10 ? '#6eb9db':
+                           d == 11 ? '#18f079':
+                           d == 12 ? '#71e71d':
+                           d == 13 ? '#c976c8':
+                           '#FFEDA0';
+                }
+            return div;
+            }
+
+            var legend1 = L.control({position: 'bottomright'});
+            legend1.onAdd = function (mymap) {
+                if(document.getElementById('bubble').checked) {
+                         var selection=  "bubble";
+                }
+                var div = L.DomUtil.create('div', 'info legend'),
+                    grades = [1,2,3,4,5,6,7,8,9,10,11,12,13],
+                    labels = ['HiraSeth Chawl to Waras Lane','Navneet Lane to Tare Galli','BhandarVada to Amar Prem Chowk','Pakhari Galli','Shankar Mandir to Bhagat Galli','Gonta Galli to Kranti Galli','Kranti Galli to Navjeevan Wasahat','Bazar Galli to Fish Market','Maval Maratha (Payari)','Sonapur to Dukkar Galli','Dukkar Galli to Taak Galli', 'Nagobacha Ghumat to Achanak','GolfaDevi'];
+
+                // loop through our density intervals and generate a label with a colored square for each interval
+                div.innerHTML += "<h4>Legend</h4><hr>";
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<i class="rectangle-wide" style="background:' + getColor(grades[i]) + ';opacity:1;"></i>Zone ' +
+                       grades[i] + ':' + (labels[i]) + '<br>';
+                }
+                
+                
+                function getColor(d) {
+                    return d ==1 ? '#f373ed' :
+                           d ==2 ? '#1ee221' :
+                           d ==3  ? '#8978db' :
+                           d ==4  ? '#cab371' :
+                           d ==5  ? '#27e0cb':
+                           d == 6 ? '#d35018':
+                           d == 7 ? '#c9626e':
+                           d == 8 ? '#b7d811':
+                           d == 9 ? '#b97ae3':
+                           d == 10 ? '#6eb9db':
+                           d == 11 ? '#18f079':
+                           d == 12 ? '#71e71d':
+                           d == 13 ? '#c976c8':
+                           '#FFEDA0';
+                }
+            return div;
+            
+        };
+
+        
+</script>
+{% endblock extra_map_javascript %}

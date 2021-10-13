@@ -1,0 +1,412 @@
+{% extends 'new.html' %} {% load static%} {% load has_group %}{% block content %}
+{% load i18n %}
+{% block extra_css %}
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
+<style>
+    #wrapper {
+        margin-top: 100px;
+        margin-left: 40px;
+        margin-right: 50px;
+    }
+    
+    table {
+        border: 1px solid black;
+        border-collapse: collapse;
+        /* margin-left: 40px; */
+        margin-right: 400px;
+    }
+    
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width: 10%;
+    }
+</style>
+{% endblock %}
+<!-- <form action="coordinator" method="POST">
+    {% csrf_token %} -->
+<div id="wrapper">
+    <h2>Tracksheet Filtered Details</h2></centre> 
+    <!-- <a href="/xyz/">Update Duty Chart</a> -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p></p>
+        <hr> {% for row in excel_data %} {% for cell in row %} {{ cell }}&nbsp;&nbsp; {% endfor %}
+        <br> {% endfor %}
+
+        <div class="input col-md-6">
+            <select class="form-control" name="state" id="maxRows">
+              <option value="5000">Show ALL Rows</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+        </div><br>
+        <br>
+        <br>
+        <div id ="selected_zone_text"></div>
+        <div id ="error_msg"></div>
+        
+        <div class="input col-md-6">
+     
+            <b>Filter data by</b><br>
+            <b>From Date  &nbsp;&nbsp;</b><input type="date" id="date"><b>&nbsp;&nbsp;To Date  &nbsp;&nbsp;</b>  <input type="date" id="date1"> 
+              &nbsp;&nbsp;&nbsp;&nbsp;<br>and by <b>Zone  </b> &nbsp;&nbsp;   
+            <!-- <b>Filter data by</b><br>
+            <b>Date  </b><input type="date" id="date">and by <b>Zone  </b>     -->
+            <select class ="dropdown" id="zone" multiple onclick = "zoneclick()">
+            <!-- <select id="zone"> -->
+            <!-- <option value="ALL">All</option> -->
+            <option value="Hira Seth Chawl to Waras Lane">Hira Seth Chawl to Waras Lane</option>
+            <option value="Navneet Lane to Tare Galli">Navneet Lane to Tare Galli</option>
+            <option value="Bhandar Wada to Amar Prem Chowk">Bhandar Wada to Amar Prem Chowk</option>
+            <option value="Pakhari Galli">Pakhari Galli</option>
+            <option value="Shankar Mandir to Bhagat Galli">Shankar Mandir to Bhagat Galli</option>
+            <option value="Gonta Galli to Kranti Galli">Gonta Galli to Kranti Galli</option>
+            <option value="Kranti galli to Navjeevan wasahat">Kranti galli to Navjeevan wasahat</option>
+            <option value="Bazar Galli to Fish market">Bazar Galli to Fish market</option>
+            <option value="Maval Maratha (Payari)">Maval Maratha (Payari)</option>
+            <option value="Sonapur to Dukkur Galli">Sonapur to Dukkur Galli</option>
+            <option value="Dukkur Galli to Taak Galli">Dukkur Galli to Taak Galli</option>
+            <option value="Nagobacha Ghumat to Achanak">Nagobacha Ghumat to Achanak</option>
+            <option value="Golfadevi">Golfadevi</option>
+            </select>
+            <!-- <input type="radio" id="ALL" name="ALL" value="ALL">
+            <label for="ALL">ALL</label><br>
+            <input type="radio" id="HW" name="Hira Seth Chawl to Waras Lane" value="Hira Seth Chawl to Waras Lane"> -->
+            <!-- <label for="HW">Hira Seth Chawl to Waras Lane</label><br> -->
+            <!-- <a href="" onclick = "this.href='/download_data_zone/' +document.getElementById('date').value +'&'+document.getElementById('zone').value" class="btn btn-primary">Get Data</a> -->
+            <!-- <a href="" onclick = "this.href='/download_data_zone/' +document.getElementById('date').value +'to'+document.getElementById('date1').value+'&'+document.getElementById('zone').value" class="btn btn-primary">Get Data</a> -->
+            <!-- <a href="" onclick = "this.href='/download_data_zone/' +document.getElementById('date').value +'to'+document.getElementById('date1').value+'&'+document.getElementById('selected_zone').innerHTML" class="btn btn-primary">Get Data</a> -->
+            <a href="" id="get-data"class="btn btn-primary">Get Data</a>
+ 
+        </div>
+        
+        <br><br><br><br><br><br>
+
+        <br>
+        <br>     
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-sm" id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>{% trans "Houses Reached" %} </th>
+                        <th>{% trans "Houses Doing Segregation" %}</th>
+                        <th>{% trans "Houses Giving Mixed Waste" %}</th>
+                        <th>{% trans "Dry Waste BF" %}</th>
+                        <th>{% trans "Dry Waste AF" %}</th>
+                        <th>{% trans "Wet Waste BF" %}</th>
+                        <th>{% trans "Wet Waste AF" %}</th>
+                        <th>{% trans "Zone Name" %}</th>
+                        <th>{% trans "Track ID" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Supervisor Name" %}</th>
+                        <th>{% trans "Rejected" %}</th>
+                        <th>{% trans "Zone ID" %}</th>
+                        <th>{% trans "Entry" %}</th>
+                        {% if request.user|has_group:"Editor" %}
+                            <th>Update</th>
+                        {% endif %}
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    {% for i in datas %}
+
+                    <tr id="somerow">
+                        <td>{{i.num_houses_reached}}</td>
+                        <td>{{i.num_houses_doing_segg}}</td>
+                        <td>{{i.num_houses_giving_mixwaste}}</td>
+                        <td>{{i.drywaste_bf}}</td>
+                        <td>{{i.drywaste_af}}</td>
+                        <td>{{i.wetwaste_bf}}</td>
+                        <td>{{i.wetwaste_af}}</td>
+                        <td>{{i.lane_name}}</td>
+                        <td>{{i.track_id}}</td>
+                        <td>{{i.date}}</td>
+                        <td>{{i.supervisor_name}}</td>
+                        <td>{{i.rejected}}</td>
+                        <td>{{i.zone_id_id}}</td>
+                        <td>{{i.reason_late_entry}}</td>
+                        {% if request.user|has_group:"Editor" %}
+                        <td>
+                            <a href="/edit/{{ i.track_id }}" style="color: rgb(168, 4, 4);"><span class="glyphicon glyphicon-pencil" >Edit | </span></a>
+                            <a href="/delete/{{ i.track_id }}" style="color: rgb(122, 23, 23);">Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                   
+                </tbody>
+                
+            </table>
+            
+            <nav>
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+        <br>
+        <br>
+
+
+        <centre><a href="/trackform/" class="btn btn-primary">Add New Record</a></centre>
+        <p></p>
+   
+
+
+        <script>
+
+               
+            
+            
+            $(document).ready(function() {
+
+              document.getElementById("get-data").addEventListener("click", function(event){
+                let urlSplit = (window.location.href.split('/'));
+                let currentURL = `${urlSplit[0]}//${urlSplit[2]}/download_data_zone/`
+                console.log(currentURL)
+                  event.preventDefault()
+                  let date = document.getElementById('date').value;
+                  let date1 = document.getElementById('date1').value;
+                  let selected_zone = document.getElementById('selected_zone_text').innerHTML;
+                  if(date==="" || date1=="" || selected_zone===""){
+                    console.log("fill the value")
+                    document.getElementById("error_msg").innerHTML = "<p>Please select Zones , from and to date<p>"
+                  } 
+                  else{
+                    let url = `${date}to${date1}&${selected_zone}`;
+                    let uri = encodeURIComponent(url);
+                    window.location = currentURL + uri;
+                  }
+
+                });
+                $('#maxRows').on('change', function() {
+                    // getPagination('#myTable', $(this).val());
+                });
+                getPagination('#myTable', 26); // the no of rows default you want to show
+                // getPagination1('#myTable');
+            });
+
+            
+          //getPagination('.table-class');
+          //getPagination('table');
+
+      /*          PAGINATION 
+      - on change max rows select options fade out all rows gt option value mx = 5
+      - append pagination list as per numbers of rows / max rows option (20row/5= 4pages )
+      - each pagination li on click -> fade out all tr gt max rows * li num and (5*pagenum 2 = 10 rows)
+      - fade out all tr lt max rows * li num - max rows ((5*pagenum 2 = 10) - 5)
+      - fade in all tr between (maxRows*PageNum) and (maxRows*pageNum)- MaxRows 
+      */
+     
+
+function getPagination1(table) {
+    // alert("Success")
+  var lastPage = 1;
+
+  $('#maxRows')
+    .on('change', function(evt) {
+      //$('.paginationprev').html('');            // reset pagination
+
+     lastPage = 1;
+      $('.pagination1')
+        .find('li')
+        .slice(1, -1)
+        .remove();
+      var trnum = 0; // reset tr counter
+      var maxRows = parseInt($(this).val()); // get Max Rows from select option
+
+      if (maxRows == 5000) {
+        $('.pagination1').hide();
+      } else {
+        $('.pagination1').show();
+      }
+
+      var totalRows = $(table + ' tbody tr').length; // numbers of rows
+      $(table + ' tr:gt(0)').each(function() {
+        // each TR in  table and not the header
+        trnum++; // Start Counter
+        if (trnum > maxRows) {
+          // if tr number gt maxRows
+
+          $(this).hide(); // fade it out
+        }
+        if (trnum <= maxRows) {
+          $(this).show();
+        } // else fade in Important in case if it ..
+      }); //  was fade out to fade it in
+      if (totalRows > maxRows) {
+        // if tr total rows gt max rows option
+        var pagenum = Math.ceil(totalRows / maxRows); // ceil total(rows/maxrows) to get ..
+        //  numbers of pages
+        for (var i = 1; i <= pagenum; ) {
+          // for each page append pagination li
+          $('.pagination1 #prev')
+            .before(
+              '<li data-page="' +
+                i +
+                '">\
+                  <span>' +
+                i++ +
+                '<span class="sr-only">(current)</span></span>\
+                </li>'
+            )
+            .show();
+        } // end for i
+      } // end if row count > max rows
+      $('.pagination1 [data-page="1"]').addClass('active'); // add active class to the first li
+      $('.pagination1 li').on('click', function(evt) {
+        // on click each page
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+        var pageNum = $(this).attr('data-page'); // get it's number
+
+        var maxRows = parseInt($('#maxRows').val()); // get Max Rows from select option
+
+        if (pageNum == 'prev') {
+          if (lastPage == 1) {
+            return;
+          }
+          pageNum = --lastPage;
+        }
+        if (pageNum == 'next') {
+          if (lastPage == $('.pagination li').length - 2) {
+            return;
+          }
+          pageNum = ++lastPage;
+        }
+
+        lastPage = pageNum;
+        var trIndex = 0; // reset tr counter
+        $('.pagination li').removeClass('active'); // remove active class from all li
+        $('.pagination [data-page="' + lastPage + '"]').addClass('active'); // add active class to the clicked
+        // $(this).addClass('active');          // add active class to the clicked
+      limitPagging();
+        $(table + ' tr:gt(0)').each(function() {
+          // each tr in table not the header
+          trIndex++; // tr index counter
+          // if tr index gt maxRows*pageNum or lt maxRows*pageNum-maxRows fade if out
+          if (
+            trIndex > maxRows * pageNum ||
+            trIndex <= maxRows * pageNum - maxRows
+          ) {
+            $(this).hide();
+          } else {
+            $(this).show();
+          } //else fade in
+        }); // end of for each tr in table
+      }); // end of on click pagination list
+    limitPagging();
+    })
+    .val(5)
+    .change();
+
+  // end of on select change
+
+  // END OF PAGINATION
+}
+
+function limitPagging(){
+  // alert($('.pagination li').length)
+
+  if($('.pagination1 li').length > 7 ){
+      if( $('.pagination1 li.active').attr('data-page') <= 3 ){
+      $('.pagination1 li:gt(5)').hide();
+      $('.pagination1 li:lt(5)').show();
+      $('.pagination1 [data-page="next"]').show();
+    }if ($('.pagination1 li.active').attr('data-page') > 3){
+      $('.pagination1 li:gt(0)').hide();
+      $('.pagination1 [data-page="next"]').show();
+      for( let i = ( parseInt($('.pagination1 li.active').attr('data-page'))  -2 )  ; i <= ( parseInt($('.pagination li.active').attr('data-page'))  + 2 ) ; i++ ){
+        $('.pagination1 [data-page="'+i+'"]').show();
+
+      }
+
+    }
+  }
+}
+
+$(function() {
+  // Just to append id number for each row
+  // $('table tr:eq(0)').prepend('<th> ID </th>');
+
+  var id = 0;
+
+  $('table tr:gt(0)').each(function() {
+    id++;
+    // $(this).prepend('<td>' + id + '</td>');
+  });
+});
+
+            
+            function getPagination(table, norows) {
+
+                $('.pagination').html(''); // reset pagination 
+                var trnum = 0; // reset tr counter 
+                var maxRows = norows; // get Max Rows from select option
+                var totalRows = $(table + ' tbody tr').length; // numbers of rows 
+                $(table + ' tr:gt(0)').each(function() { // each TR in  table and not the header
+                    trnum++; // Start Counter 
+                    if (trnum > maxRows) { // if tr number gt maxRows
+
+                        $(this).hide(); // fade it out 
+                    }
+                    if (trnum <= maxRows) {
+                        $(this).show();
+                    } // else fade in Important in case if it ..
+                }); //  was fade out to fade it in 
+                if (totalRows > maxRows) { // if tr total rows gt max rows option
+                    var pagenum = Math.ceil(totalRows / maxRows); // ceil total(rows/maxrows) to get ..  
+                    //	numbers of pages 
+                    for (var i = 1; i <= pagenum;) { // for each page append pagination li 
+                        $('.pagination').append('<li class"wp" data-page="' + i + '">\
+                                     <span>' + i++ + '<span class="sr-only">(current)</span></span>\
+                                   </li>').show();
+                    } // end for i 
+                } // end if row count > max rows
+                $('.pagination li:first-child').addClass('active'); // add active class to the first li 
+                $('.pagination li').on('click', function() { // on click each page
+                    var pageNum = $(this).attr('data-page'); // get it's number
+                    var trIndex = 0; // reset tr counter
+                    $('.pagination li').removeClass('active'); // remove active class from all li 
+                    $(this).addClass('active'); // add active class to the clicked 
+                    $(table + ' tr:gt(0)').each(function() { // each tr in table not the header
+                        trIndex++; // tr index counter 
+                        // if tr index gt maxRows*pageNum or lt maxRows*pageNum-maxRows fade if out
+                        if (trIndex > (maxRows * pageNum) || trIndex <= ((maxRows * pageNum) - maxRows)) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        } //else fade in 
+                    }); // end of for each tr in table
+                }); // end of on click pagination list
+            }
+
+
+
+
+          function zoneclick(){
+              var selected = [];
+              var selected_zone = document.getElementById('selected_zone_text')
+              document.getElementById("error_msg").innerHTML = "";
+              for (var option of document.getElementById('zone').options){
+                if(option.selected){
+                  // selected.push("'")
+                  // selected.push("'"+option.value+"'");
+                  selected.push(option.value);
+                  // selected.push("'")
+                  selected_zone.innerHTML =  selected;
+                }
+              }
+              // alert(selected);
+              
+              
+            }
+        </script> {% endblock %}

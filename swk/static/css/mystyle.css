@@ -1,0 +1,75 @@
+#mapdiv {
+    /* margin-top: 20px; */
+    height: 85vh;
+   
+}
+
+#side-bar {
+    background-color: #ffffff;
+    margin-top: 95px;
+    /* min-height: 400px; */
+    height: auto;
+    /* height: 50%; 
+    max-height: 100%;  */
+    
+    /* text-decoration-color: red; */
+}
+
+
+/* unvisited link */
+
+a:link {
+    color: rgb(8, 8, 8);
+}
+
+
+/* visited link */
+
+a:visited {
+    color: rgb(7, 7, 7);
+}
+
+
+/* mouse over link */
+
+a:hover {
+    color: blue;
+}
+
+a:active {
+    color: blue;
+}
+
+#menu__link {
+    color: aqua;
+}
+
+.col-xs-12,
+.col-xs-6,
+.col-xs-4 {
+    padding: 3px;
+}
+
+
+/* #divProject {
+    background-color: beige;
+}
+
+#divBUOWL {
+    background-color: #ffffb3;
+}
+
+#divEagle {
+    background-color: #ccffb3;
+    width: auto;
+}
+
+#divRaptor {
+    background-color: #e6ffff;
+}
+
+.errorMsg {
+    padding:0;
+    text-align:center;
+    background-color:darksalmon;
+} */

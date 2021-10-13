@@ -1,0 +1,66 @@
+{% extends 'new.html' %} 
+{% load i18n %}
+{% block content %}{% block extra_css %}
+
+
+{% endblock %}
+
+    <br>
+    <div class="container mb-7" >
+        <h2>{% trans "About Swachh Worli Koliwada" %}</h2>
+        <br>
+    </div>      
+    <div class="container"style="overflow:auto;"  >
+        <div class="row" >
+            <div class="col-sm-8" >
+                <h3>{% trans "Background" %}</h3>
+                <hr>
+                <h5>
+                    <p style="text-align:justify">{% blocktrans %}IDFC FIRST Bank in collaboration with Municipal Corporation of Greater Mumbai (MCGM) and Stree Mukti Sanghatana spearheaded Swachh Worli Koliwada project with an aim to create awareness and bring about a behavioural change in the community on solid waste management practices and adoption of waste segregation at source. The project plans to drive this change through a participatory process within the Worli Koliwada community. {% endblocktrans %}</p>
+                    <p style="text-align:justify">{% blocktrans %}Swachh Worli Koliwada project aims at building a zero waste neighbourhood with self-sustainable zones that are equipped to manage solid waste they generate, with a model where community participation will be a key at every stage, ensuring sustainability of this program. {% endblocktrans %}</p>
+                </h5>
+                    
+                <br>
+                <a href = "https://www.idfcfirstbank.com"><h3>{% trans "About IDFC FIRST Bank" %}</h3></a>
+                <hr>
+                <h5>
+                    <p style="text-align:justify;">{% blocktrans %}IDFC FIRST Bank was founded by the merger of IDFC Bank and Capital First in December 2018. The Bank provides a range of financial solutions to individuals, small businesses and corporates. The Bank offers savings and current accounts, NRI accounts, salary accounts, demat accounts, fixed and recurring deposits, home and personal loans, two-wheeler loans, consumer durable loans, small business loans, forex products, payment solutions and wealth management services. IDFC FIRST Bank has a nationwide presence and operates in the Retail Banking, Wholesale Banking and other Banking segments.{% endblocktrans %}
+                    </p>
+                </h5>
+                <br>
+
+                <a href ="https://portal.mcgm.gov.in/"><h3>{% trans "About Municipal Corporation of Greater Mumbai " %}</h3></a>
+                <hr>
+                <h5>
+                    <p style="text-align:justify">{% blocktrans %}The Municipal Corporation of Greater Mumbai (MCGM) formerly and commonly known as the Bombay Municipal Corporation (BMC) is the governing civic body of Mumbai, the capital city of Maharashtra.  MCGM is responsible for the civic infrastructure and administration of the city and some suburbs.Brihanmumbai Mahanagarpalika covers an area of 480.24 sq.kms with a population of 1,19,14,378 as per the census of 2001. The metropolis accounts major portion of India's international trade and government revenue, from being one of the foremost centers of education, science and technological research and advancement. {% endblocktrans %}
+                </h5>
+                </p>
+                <br>
+               
+                <a href ="https://streemuktisanghatana.org/"><h3>{% trans "About Stree Mukti Sangathana(SMS)" %}</h3></a>
+                <hr>
+                <h5>
+                    <p style="text-align:justify">{% blocktrans %}Stree Mukti Sanghatana established in 1975 is a non-profit organisation and strives to create a gender just world by improving the lives of women through education, awareness, healthcare, and opportunities for livelihood. Its vision is eradication of poverty and violence, and creation of a conducive atmosphere for equality.  It engages in the process of dialogues and reformation through various activities like Theatre, in-house monthly publication “Prerak Lalkari”,  Family Counselling centres, Adolescent sensitization program, creating sustainable livelihood programmes etc.  {% endblocktrans %}</p>
+                    <p style="text-align:justify">{% blocktrans %}Since 1999 SMS has been working for the cause of women waste pickers and offering solutions for Solid Waste Management. SMS is registered under Bombay Public Trusts Act and Societies registration act and has 80-G and 12 A certificates under the Income Tax Act, 1961. {% endblocktrans %}</p>
+                </h5>
+                </p>
+                <br>
+
+                              
+                <a href = "https://communitygis.net/"><h3>{% trans "About Community GIS" %}</h3></a>
+                <hr>
+                <h5>
+                    <p style="text-align:justify">
+                        {% blocktrans %}Communitygis is a Free and Open Source platform for community ownership of data and code for geographic data. 
+                        Technically communityGIS is a platform for a spatial data infrastructure. 
+                        This consists of an application  (with license GPLv3 ) frontend as GUI  using python Django and Javascripts while the backend is geonode the code is available at github .
+                        This platform can be used with modifications for other themes. The preliminary instructions to install and use  will be made available soon .
+                        This has been developed by teams from makerghat and  CTARA IIT Bombay .{% endblocktrans %}
+                    </p>
+                </h5>
+            </div>
+        </div>
+    </div>
+    <br>
+        
+{% endblock %}

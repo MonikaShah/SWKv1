@@ -1,0 +1,10 @@
+{%extends '../new.html' %} {% load static %} {% block extra_css%}
+<link rel="stylesheet" type="text/css" href="{% static 'react_dashboard/index.css' %}" /> {% endblock%} {% block content%}
+
+<div id="main">
+    <div id="app">
+    </div>
+</div>
+{% endblock%} {% block extra_javascript%}
+<script src="{% static 'react_dashboard/main.js' %}"></script>
+{% endblock %}

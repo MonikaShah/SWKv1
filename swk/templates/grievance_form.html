@@ -1,0 +1,202 @@
+{% extends 'new.html' %}  {% load crispy_forms_tags %}
+{% load static%} {% block content %}{% block extra_css %}
+{% load i18n %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+<script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script> -->
+    <!-- <script type="text/javascript" src="http://yourjavascript.com/7174319415/script.js"></script> -->
+    <script>
+        function GetSelectedTextValue(zones_selected) {
+        var str = zones_selected.options[zones_selected.selectedIndex].innerHTML;
+
+        // var grievance_id = str.substring(0, 3)   // Returns "ell"
+        var grievance_id =str.concat("_");
+        // var dt = new Date().getUTCMilliseconds();
+        var today = new Date();       
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;  
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var today = dd + '/' + mm + '/' + yyyy;
+
+        // var dt = day.concat("-").concat(month).concat("-").concat(year);
+
+        grievance_id = grievance_id.toUpperCase()+today;
+        console.log(grievance_id);
+        // alert(grievance_id);
+
+        document.getElementById("grievance_no").value = grievance_id;
+    }
+
+        window.onload = () => {
+        
+        $(document).ready(function() {
+        $(document).on('change', 'select#selectlanes', function () {
+            document.getElementById("id_selectzones").value =  $('#selectzones').val();
+            document.getElementById("id_selectlanes").value =  $('#selectlanes').val();
+        }),
+        
+ 
+
+
+
+        $(document).on('click', 'select#selectzones', function () {
+            
+                 var optionSelected = $(this).find("option:selected");
+                 var valueSelected  = optionSelected.val();
+                // var country_name   = optionSelected.text();
+                
+                 var country_name   = [];
+                 country_name.push(optionSelected.text());
+                 
+                 //data = {'cnt' : "country_name" };
+                 //data: { hint: {'asdf':4} };
+                 //data: { json_data: JSON.stringify({ hint: {'asdf':4} }) };
+               
+                 $.ajax({
+                    
+                        url: '/getdetails',
+                        type: 'get', // This is the default though, you don't actually need to always mention it
+                        data: {'name': country_name},
+                        //data:JSON.stringify(data),
+                        dataType: "json",
+                        
+
+
+
+                        success: function(result) {
+                            
+
+                        if(country_name == 'please select your zone')
+                        {
+                        $("#selectzones option").remove();
+                        for (var i = result.length - 1; i >= 0; i--) {
+                            if(result[i].name != country_name)
+                            {
+                            $("#selectzones").append('<option>'+ result[i].name +'</option>');
+                            }
+                            else
+                            {
+                                $("#selectzones").append('<option selected>'+ result[i].name +'</option>');
+                            }
+                        }
+                        }
+                        else
+                        {
+                            $("#selectlanes option").remove();
+                        for (var i = result.length - 1; i >= 0; i--) {
+                            if(result[i].name != country_name)
+                            {
+                            $("#selectlanes").append('<option>'+ result[i].name +'</option>');
+                            }
+                            else
+                            {
+                                $("#selectlanes").append('<option selected>'+ result[i].name +'</option>');
+                            }
+                            document.getElementById("id_selectzones").value =  $('#selectzones').val();
+                            document.getElementById("id_selectlanes").value =  $('#selectlanes').val();
+
+                        }
+                        }
+                        }, 
+        errors: function(e) {
+            alert(e);
+        }
+                    
+             });
+            });
+        });
+    }
+    </script>
+<style>
+
+select {
+    width : 300px;
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-padding-end: 20px;
+    -moz-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -moz-padding-start: 2px;
+    /* background-color: #a0f3bcd0; Fallback color if gradients are not supported */
+    
+    background-position: center right;
+    background-repeat: no-repeat;
+    border: 1px solid rgb(170, 170, 170);
+    border-radius: 2px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    color: #555;
+    font-size: inherit;
+    margin: 0;
+    overflow: hidden;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+    .form-row {
+        margin: 50px;
+    }
+    
+    table {
+        padding: 10px;
+    }
+    
+    #feedback_div{
+        display: none;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+
+
+
+<div class="container mb-7" style="margin-top: 10px;">
+    <h2>{% trans "Grievance Form "%}</h2><hr><br>
+    
+    <!-- <h1 class='text-center mt-5'>Feedback / Complaint Form</h1> -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- <ul class="errorlist"><li>done<ul class="errorlist"><li>This field is required.</li></ul></li></ul> -->
+            {% endfor %}
+        </ul>
+        {% endif %}
+    <form method="post" data-url="{{ request.build_absolute_uri|safe }}" class="form-group" style="text-align:left;">
+        <!-- {{ form.media }} -->
+        {% csrf_token %}
+
+        <select name="selectzones" id="selectzones" onchange="GetSelectedTextValue(this)">
+            
+            <option value="select">please select your zone</option>
+ 
+          </select>  
+            <select name ="selectlanes" id="selectlanes">
+                <option value="select">please select address lane</option>
+
+            </select>
+         
+        <div class="container mb-7" style="margin-top: 10px;" id = "feedback_div">
+            <table table style="margin-right: 10px";>{{ form.as_table}}</table> <br>
+            <input type="hidden" id="grievance_no" value=""  name="grievance_no" />
+            <button type="submit" style="align-items: center;" class="btn btn-primary">Send Mail</button><br>
+        </div>
+    </form>
+</div><br>
+ {% endblock %} 

@@ -1,0 +1,157 @@
+{% extends 'new.html' %}{% load static %} {% block content %}
+{% load i18n %}
+<div class="container mb-7" style="text-align: justify;">
+<br>
+<h1>{% trans "OUR VISION" %}</h1>
+<br>
+<h3>
+<div style="width:100%;text-align: justify;">
+    <div style="width: 80%; height: 100px; float: left;"><h2><b><i>
+    {% blocktrans %}Making the area of Worli Koliwada a Zero Waste Area, 
+    thus helping in environment and creating job opportunities 
+    for women and men from  marginalised section of the 
+    society. {% endblocktrans %} </b></i></h2>
+    </div>
+    <div style="flex-grow: 1;">
+        <img class="header-left" src="{% static 'images/FAQ1.jpg' %}">
+    </div>
+</div></h3><hr>
+<!-- <b>Ans:</b> -->
+<h1>{% trans "FREQUENTLY ASKED QUESTIONS" %}</h1><br>
+<h3>{% trans "1. What do you mean by Zero Waste?" %}</h3>
+<h4><p>{% trans "ANS:&nbsp;&nbsp;  Zero Waste is a concept where waste is completely utilized by reusing or recycling.   Only minimal quantity is transported to the dumping ground.  This ensures a cyclical process of resources and leaves behind only minimal quantity of residual waste." %} </p></h4>
+<br>
+<h3>{% trans "2. What are the advantages of ensuring Zero Waste?" %}</h3>
+<h4><p>{% blocktrans %}Ans:&nbsp;&nbsp;  Ensuring Zero Waste is the most environmentally friendly way of living as it prevents valuable recyclable materials(Dry and Wet) from being wasted at the dumping ground.  Our country depends much on agriculture.  Chemical fertilizers spoil the quality of the soil.  Organic manure gives better water retention capacity to the soil.
+    Our effective action towards achieving this goal will ensure:{% endblocktrans %}
+    <nav>
+        <ol>
+            <li>
+                {% trans "that valuable recyclable materials (Dry and Wet) are not wasted at the dumping grounds." %}
+            </li>
+            <li>
+                {% trans "conversion of wet waste into compost thus restoring nature’s wealth." %}
+            </li>
+            <li>
+                {% trans "saving of transport cost and tipping fee for Local Self Governments." %}
+            </li>
+            <li>
+                {% trans "saving of emissions due to transport, cleaner roads, lesser pollution." %}
+            </li>
+            <li>
+                {% trans "prevention of Air Pollution." %}
+            </li>
+            <li>
+                {% trans "prevention of Water Pollution." %}
+            </li>
+            <li>
+                {% trans "prevention of Land Pollution." %}
+            </li>
+            <li>
+                {% trans "economy of resources thus enabling savings at individual level, family level, society level, state level, national level and also universal level." %}
+            </li>
+        </ol>
+    </nav>
+    {% trans "It is a way to give back to the nature and also an unconditional gift of love intended from us to the next generation." %}
+</p></h4>
+<br>
+<h3>{% trans "3. What is the process adopted to ensure Zero Waste?" %}</h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;  The process of Zero Waste Management involves 4 simple steps:" %}
+    <nav>
+        <ol>
+            <li>
+                {% trans "Collection of the waste separated according to categories namely (a) Dry Waste. (b) Wet Waste and (c) Hazardous Waste." %}
+            </li>
+            <li>
+                {% trans "Further segregation depending on the requirement for recycling." %}
+            </li>
+            <li>
+                {% trans "Recycling" %}
+            </li>
+            <li>
+                {% trans "Disposal of Hazardous Waste." %}
+            </li>
+        </ol>
+    </nav>
+</p>
+</h4>
+<br>
+<h3>{% trans "4. What do you do with the Separated Waste?" %}</h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;We (i)convert Organic Wet Waste into compost,  (ii) send Dry Waste for recycling & (iii) send the hazardous waste to the municipality for processing in the incinerator." %}
+</p>
+</h4>
+
+
+</h4>
+<br>
+<h3>{% trans "5. Would you be processing the waste in our nearby localities?  If so, it will lead to foul smell.  We do not want the process to be carried out in our backyard. We would rather give mixed waste so it may be sent to  the dump yard.  Out of sight is out of mind. We are therefore left with no choice but to throw it in the sea/dump/kiosk." %}</h3>
+<h4><p>{% blocktrans %} "Ans:&nbsp;&nbsp; It is a misconception that the process leads to generation of foul smell.  We have been processing the waste in Kandivali Cemetery for over 6 months now.
+       We strongly recommend that you visit the cemetery and experience for yourself how least inconvenient the process is to the community.   Instead, it in fact contributes to reducing health hazards."{% endblocktrans %}</p></h4>
+<br>
+<h3>{% trans "6. Why should we maintain the Waste separately before giving?" %} </h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;  Maintaining different kinds of waste separately is the first step towards cleanliness.  It helps to ensure better public health.  It also helps in minimizing the pollution of air, water, and land and thus also prevents health hazards" %}
+    <br>
+    {% trans "All of these can happen only if the community participates whole heartedly and gives the waste of different kinds in separate category.  It is not difficult. " %}</p></h4>
+<br>
+<h3>{% trans "7. We pay tax to the municipality.  To take care of issues relating to public health is the responsibility of the Municipality. Why should we do their job?" %}</h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;If we cannot as a family provide one kilogram of waste separated appropriately it is unreasonable to expect Municipality to segregate 7-8 thousand kilograms of waste." %}
+    <br>
+    {% trans "To dispose off the waste in appropriate manner is indeed the job of the municipality.  However, unless we provide waste separately, the same cannot be processed; instead it then has to be sent to the dumping ground." %}  
+    <br>
+    {% trans "You are not providing the waste separately to help Municipality; you are maintaining the different categories of waste separately to ensure better recyclying of resources in the present and ensuring availability of sufficient and better quality resources(air, water and land) for the future generation." %} </p></h4>
+<br>
+<h3>{% trans "8. Even if we give different kinds of waste separately, most of the people in the neighborhood throw their waste in the sea/kiosk/dumping bin." %}</h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp; Waste segregation by the waste generator is a new thought and requires change in habit of the people. This transformation will take some time. But we are working together to bring about the much needed change.   We are also making significant progress in bringing about this change." %}
+    <br>
+    {% trans "Earlier in August 2020 we did not get different kinds of waste separately from people but gradually by September 2020 we started getting 2 tons (2000 kg) of wet waste per month and by January 2021 this number has increased to 21 tons (21,000 kg) per month." %}
+    <br>
+    {% trans "If we continue to progress at this rate, and the number of people's participation continues to increase, we will soon be able to declare our Worli Koliwada as a Zero-Waste area." %}
+<br><br>
+<h3>{% trans "9. Our house is small. How can we keep different kinds of waste separately without having to use more bins and space?" %}</h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;For day to day use, you need only one bin per household.To ensure that different kinds of waste are maintained separately :" %}
+    <nav>
+        <ol>
+            <li>
+                {% trans "Put the Organic/ Wet Waste food items in the bin" %}
+            </li>
+            <li>
+                {% trans "Keep a plastic bag to put the dry waste and e-waste in." %}
+            </li>
+            <li>
+                {% trans "Keep another plastic bag to put the hazardous waste like sanitary napkins, diapers,  needles and syringes  -  This waste is not generated very often and therefore when generated may be handed over in a separate plastic bag, preferably with a mark as will signify that it is hazardous waste." %}
+            </li>
+        </ol>
+    </nav>
+    
+<br>
+<h3>{% trans "10. We cannot be keeping the fish waste at home and therefore we throw it in the sea." %} </h3>
+<h4><p>{% trans "Ans:&nbsp;&nbsp;Fish waste comprises of flesh, skin, and bones.  Fish wastes degrade rapidly in warm temperatures. As a result of bacterial decomposition, it emits foul smell. If not managed properly, such disposal poses environmental and health problems as it requires higher levels of oxygen to process the organic waste." %}
+    <br>
+    {% trans "Environmental concerns associated with disposal of fish wastes into ocean waters include:" %}
+    <nav>
+        <ul>
+            <li>
+                {% trans "reduced oxygen levels in the seawaters at the ocean bottom;" %}
+            </li>
+            <li>
+                {% trans "burial or smothering of living organisms; and" %}
+            </li>
+            <li>
+                {% trans "introduction of disease or non-native and invasive species to the ecosystem of the sea floor.To add to this if any plastic is disposed along-with the organic waste, it imposes even greater threat with its adverse effect seen at multiple levels." %}
+            </li>
+        </ul>
+    </nav>
+    
+    
+<br><br>
+<h3>{% trans "11. As our houses are on loft-like premises and/or are far placed from the spot location or the location wherefrom the SWK team blows the whistle, we do not get to hear the whistle when the team comes to collect the waste." %}
+<h4><p>{% blocktrans %}Ans:&nbsp;&nbsp;Our aim is to attend to each and every complaint within 24 hours. 
+    We are in the process of creating an option to get people's feedback on the SWK website. Once it is ready, you will also be able to keep track of the status of the complaint, if any. 
+    In the meanwhile, you can also meet the concerned supervisors at the SWK project office at Mahakali container office near Sea corner hotel."{% endblocktrans %} %} </p></h4>
+<br>
+
+
+
+
+</div>
+{% endblock %}

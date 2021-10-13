@@ -1,0 +1,15 @@
+.infoboxes{
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 50px;
+    gap:20px;
+}
+
+@media (max-width: 990px){
+    .infoboxes { 
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  
+  }
+  
